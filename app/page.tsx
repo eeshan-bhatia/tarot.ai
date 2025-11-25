@@ -11,29 +11,37 @@ import { TarotCard } from '@/data/tarotCards'
 export default function Home() {
   const [showLanding, setShowLanding] = useState(true)
   const [question, setQuestion] = useState<string | null>(null) // null = not selected, '' = general reading, string = question
-  const [selectedCards, setSelectedCards] = useState<TarotCard[]>([])
+  const [selectedCards, setSelectedCards] = useState<(TarotCard | null)[]>([null, null, null])
   const [reading, setReading] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
 
   const handleQuestionSubmit = (q: string | null) => {
     // q can be: null (not selected), '' (general reading), or string (question)
     setQuestion(q === null ? null : q) // Keep null as null, but allow empty string
-    setSelectedCards([])
+    setSelectedCards([null, null, null])
     setReading(null)
   }
 
   const handleCardSelect = (card: TarotCard) => {
-    if (selectedCards.length < 3) {
-      setSelectedCards([...selectedCards, card])
+    // Find the first empty position (null) and place the card there
+    const newCards = [...selectedCards]
+    const emptyIndex = newCards.findIndex(c => c === null)
+    if (emptyIndex !== -1) {
+      newCards[emptyIndex] = card
+      setSelectedCards(newCards)
     }
   }
 
-  const handleCardRemove = (index: number) => {
-    setSelectedCards(selectedCards.filter((_, i) => i !== index))
+  const handleCardRemove = (position: number) => {
+    // Remove card from specific position
+    const newCards = [...selectedCards]
+    newCards[position] = null
+    setSelectedCards(newCards)
   }
 
   const handleGetReading = async () => {
-    if (selectedCards.length === 3) {
+    const validCards = selectedCards.filter((card): card is TarotCard => card !== null)
+    if (validCards.length === 3) {
       setIsLoading(true)
       try {
         const response = await fetch('/api/reading', {
@@ -43,7 +51,7 @@ export default function Home() {
           },
           body: JSON.stringify({
             question: question && question.trim() !== '' ? question : null,
-            cards: selectedCards.map(card => ({
+            cards: validCards.map(card => ({
               name: card.name,
               meaning: card.meaning,
               keywords: card.keywords,
@@ -52,14 +60,16 @@ export default function Home() {
         })
 
         if (!response.ok) {
-          throw new Error('Failed to generate reading')
+          const errorData = await response.json().catch(() => ({}))
+          throw new Error(errorData.error || 'Failed to generate reading')
         }
 
         const data = await response.json()
         setReading(data.reading)
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error generating reading:', error)
-        alert('Failed to generate reading. Please try again.')
+        const errorMessage = error.message || 'Failed to generate reading. Please try again.'
+        alert(errorMessage)
       } finally {
         setIsLoading(false)
       }
@@ -149,7 +159,7 @@ export default function Home() {
                       onCardRemove={handleCardRemove}
                     />
 
-                    {selectedCards.length === 3 && (
+                    {selectedCards.every(card => card !== null) && (
                       <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -170,7 +180,7 @@ export default function Home() {
             ) : (
               <ReadingDisplay
                 question={question}
-                selectedCards={selectedCards}
+                selectedCards={selectedCards.filter((card): card is TarotCard => card !== null)}
                 reading={reading}
                 onReset={handleReset}
               />
