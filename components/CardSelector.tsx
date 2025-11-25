@@ -34,7 +34,16 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
     if (validCards.length < 3 && availableCards.length > 0) {
       // Randomly pick a card from available cards
       const randomIndex = Math.floor(Math.random() * availableCards.length)
-      const selectedCard = availableCards[randomIndex]
+      const baseCard = availableCards[randomIndex]
+      
+      // Randomly determine if card is reversed (50/50 chance)
+      const isReversed = Math.random() < 0.5
+      
+      // Create card with reversed status
+      const selectedCard: TarotCard = {
+        ...baseCard,
+        isReversed,
+      }
       
       // Remove the selected card from available cards
       const newAvailableCards = availableCards.filter((_, index) => index !== randomIndex)
@@ -48,8 +57,10 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
   const handleCardRemove = (position: number) => {
     const removedCard = selectedCards[position]
     if (removedCard) {
+      // Remove isReversed property when returning card to pool (it will be randomly assigned again)
+      const { isReversed, ...baseCard } = removedCard
       // Add the removed card back to available cards (shuffled in)
-      const newAvailableCards = [...availableCards, removedCard].sort(() => Math.random() - 0.5)
+      const newAvailableCards = [...availableCards, baseCard].sort(() => Math.random() - 0.5)
       setAvailableCards(newAvailableCards)
       onCardRemove(position)
     }

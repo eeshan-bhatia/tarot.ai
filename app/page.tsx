@@ -53,8 +53,9 @@ export default function Home() {
             question: question && question.trim() !== '' ? question : null,
             cards: validCards.map(card => ({
               name: card.name,
-              meaning: card.meaning,
-              keywords: card.keywords,
+              meaning: card.isReversed ? card.reversed : card.meaning,
+              keywords: card.isReversed ? card.reversedKeywords : card.keywords,
+              isReversed: card.isReversed || false,
             })),
           }),
         })
@@ -78,9 +79,9 @@ export default function Home() {
 
   const handleReset = () => {
     setQuestion(null)
-    setSelectedCards([])
+    setSelectedCards([null, null, null])
     setReading(null)
-    setShowLanding(true)
+    // Keep showLanding as false so user goes back to question input, not landing page
   }
 
   const handleGetStarted = () => {

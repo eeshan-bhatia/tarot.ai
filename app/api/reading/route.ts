@@ -20,6 +20,7 @@ interface Card {
   name: string
   meaning: string
   keywords: string[]
+  isReversed?: boolean
 }
 
 export async function POST(request: NextRequest) {
@@ -37,39 +38,36 @@ export async function POST(request: NextRequest) {
     // The Bedrock client will automatically use the default credential chain if
     // AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are not provided
 
-    const cardDescriptions = cards.map((card: Card, index: number) => 
-      `Card ${index + 1}: ${card.name}\nMeaning: ${card.meaning}\nKeywords: ${card.keywords.join(', ')}`
-    ).join('\n\n')
+    const cardDescriptions = cards.map((card: Card, index: number) => {
+      const orientation = card.isReversed ? ' (Reversed)' : ' (Upright)'
+      return `Card ${index + 1}: ${card.name}${orientation}\nMeaning: ${card.meaning}\nKeywords: ${card.keywords.join(', ')}`
+    }).join('\n\n')
 
     const isGeneralReading = !question || question.trim() === ''
 
     const prompt = isGeneralReading
-      ? `You are a wise and compassionate tarot reader. A person has requested a general reading to discover what the universe wants them to know.
+      ? `Interpret these three tarot cards for a general reading:
 
-They have drawn the following three cards:
 ${cardDescriptions}
 
-Please provide a thoughtful, personalized general tarot reading that:
-1. Reveals insights about their current life path and situation
-2. Interprets the meaning of each card and what it represents in their life
-3. Explains how the cards work together to tell a story about their journey
-4. Offers guidance about what they should focus on or be aware of
-5. Maintains a warm, supportive, and mystical tone
+Provide exactly 4 paragraphs:
+1. First paragraph: Interpret Card 1 (${cards[0].name}) and its meaning in their life
+2. Second paragraph: Interpret Card 2 (${cards[1].name}) and its meaning in their life
+3. Third paragraph: Interpret Card 3 (${cards[2].name}) and its meaning in their life
+4. Fourth paragraph: Conclude by explaining what all three cards collectively suggest about their journey and offer guidance. Then, on a separate paragraph, provide a poignant, inspiring quote (in quotation marks) that relates to what the cards point towards - this can be from literature, philosophy, wisdom traditions, or your own creation, but it should be meaningful and relevant to the reading.
 
-Format your response as a flowing narrative (2-3 paragraphs) that weaves together the card meanings into a cohesive reading. Be specific and personal, as if you're speaking directly to them.`
-      : `You are a wise and compassionate tarot reader. A person has asked: "${question}"
+Begin immediately with the first card's interpretation. Do not include any introductory phrases or acknowledgments - start directly with Card 1. Be specific and personal.`
+      : `Interpret these three tarot cards in response to this question: "${question}"
 
-They have drawn the following three cards:
 ${cardDescriptions}
 
-Please provide a thoughtful, personalized tarot reading that:
-1. Addresses their specific question
-2. Interprets the meaning of each card in the context of their question
-3. Explains how the cards work together to provide guidance
-4. Offers practical, empowering advice
-5. Maintains a warm, supportive, and mystical tone
+Provide exactly 4 paragraphs:
+1. First paragraph: Interpret Card 1 (${cards[0].name}). First explain the card's general meaning and symbolism, then explain how it specifically relates to their question and what it reveals about their situation
+2. Second paragraph: Interpret Card 2 (${cards[1].name}). First explain the card's general meaning and symbolism, then explain how it specifically relates to their question and what it reveals about their situation
+3. Third paragraph: Interpret Card 3 (${cards[2].name}). First explain the card's general meaning and symbolism, then explain how it specifically relates to their question and what it reveals about their situation
+4. Fourth paragraph: Conclude by explaining what all three cards collectively suggest about the answer to their question and offer practical guidance. Then, on a separate paragraph, provide a poignant, inspiring quote (in quotation marks) that relates to their question and/or what the cards point towards - this can be from literature, philosophy, wisdom traditions, or your own creation, but it should be meaningful and relevant to both the question and the reading.
 
-Format your response as a flowing narrative (2-3 paragraphs) that weaves together the card meanings into a cohesive reading. Be specific and personal, as if you're speaking directly to them.`
+Begin immediately with the first card's interpretation. Do not include any introductory phrases or acknowledgments - start directly with Card 1. Be specific and personal.`
 
     // Use Claude model via Bedrock (you can change this to other Bedrock models)
     // Note: Model IDs in Bedrock sometimes need to be without the version suffix
@@ -88,7 +86,7 @@ Format your response as a flowing narrative (2-3 paragraphs) that weaves togethe
     
     console.log('Calling Bedrock with model:', modelId, 'in region:', region)
     
-    const systemPrompt = 'You are a wise, compassionate, and insightful tarot reader with deep knowledge of tarot symbolism and meaning. You provide thoughtful, personalized readings that help people gain clarity and guidance.'
+    const systemPrompt = 'You are a wise, compassionate, and insightful tarot reader with deep knowledge of tarot symbolism and meaning. When given tarot cards, you immediately begin interpreting them without any introductory pleasantries, affirmations, or acknowledgments. You go straight into discussing the cards and their meanings, providing the reading directly.'
     
     // Format for Claude API (Anthropic format)
     // For Claude 3, content should be an array of text blocks

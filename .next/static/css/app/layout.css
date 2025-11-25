@@ -918,6 +918,9 @@ video {
 .mt-1 {
   margin-top: 0.25rem;
 }
+.mt-4 {
+  margin-top: 1rem;
+}
 .flex {
   display: flex;
 }
@@ -1043,6 +1046,12 @@ video {
 .justify-between {
   justify-content: space-between;
 }
+.gap-2 {
+  gap: 0.5rem;
+}
+.gap-3 {
+  gap: 0.75rem;
+}
 .gap-4 {
   gap: 1rem;
 }
@@ -1056,6 +1065,11 @@ video {
   --tw-space-y-reverse: 0;
   margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1rem * var(--tw-space-y-reverse));
+}
+.space-y-6 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
 }
 .space-y-8 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
@@ -1071,8 +1085,8 @@ video {
 .whitespace-nowrap {
   white-space: nowrap;
 }
-.whitespace-pre-wrap {
-  white-space: pre-wrap;
+.rounded {
+  border-radius: 0.25rem;
 }
 .rounded-2xl {
   border-radius: 1rem;
@@ -1098,6 +1112,9 @@ video {
 .border-2 {
   border-width: 2px;
 }
+.border-t {
+  border-top-width: 1px;
+}
 .border-dashed {
   border-style: dashed;
 }
@@ -1115,6 +1132,10 @@ video {
 }
 .border-moonlight\/50 {
   border-color: rgb(255 255 255 / 0.5);
+}
+.border-red-400 {
+  --tw-border-opacity: 1;
+  border-color: rgb(248 113 113 / var(--tw-border-opacity, 1));
 }
 .bg-black\/60 {
   background-color: rgb(0 0 0 / 0.6);
@@ -1134,6 +1155,9 @@ video {
 .bg-moonlight\/60 {
   background-color: rgb(255 255 255 / 0.6);
 }
+.bg-red-600\/80 {
+  background-color: rgb(220 38 38 / 0.8);
+}
 .bg-gradient-to-br {
   background-image: linear-gradient(to bottom right, var(--tw-gradient-stops));
 }
@@ -1147,6 +1171,11 @@ video {
 }
 .from-lake-blue\/20 {
   --tw-gradient-from: rgb(59 130 246 / 0.2) var(--tw-gradient-from-position);
+  --tw-gradient-to: rgb(59 130 246 / 0) var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+}
+.from-lake-blue\/30 {
+  --tw-gradient-from: rgb(59 130 246 / 0.3) var(--tw-gradient-from-position);
   --tw-gradient-to: rgb(59 130 246 / 0) var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
@@ -1176,6 +1205,10 @@ video {
   --tw-gradient-to: rgb(99 102 241 / 0)  var(--tw-gradient-to-position);
   --tw-gradient-stops: var(--tw-gradient-from), rgb(99 102 241 / 0.2) var(--tw-gradient-via-position), var(--tw-gradient-to);
 }
+.via-mystic-purple\/30 {
+  --tw-gradient-to: rgb(99 102 241 / 0)  var(--tw-gradient-to-position);
+  --tw-gradient-stops: var(--tw-gradient-from), rgb(99 102 241 / 0.3) var(--tw-gradient-via-position), var(--tw-gradient-to);
+}
 .to-lake-blue {
   --tw-gradient-to: #3b82f6 var(--tw-gradient-to-position);
 }
@@ -1184,6 +1217,9 @@ video {
 }
 .to-lake-deep\/20 {
   --tw-gradient-to: rgb(30 64 175 / 0.2) var(--tw-gradient-to-position);
+}
+.to-lake-deep\/30 {
+  --tw-gradient-to: rgb(30 64 175 / 0.3) var(--tw-gradient-to-position);
 }
 .to-midnight-blue\/60 {
   --tw-gradient-to: rgb(10 10 26 / 0.6) var(--tw-gradient-to-position);
@@ -1209,6 +1245,14 @@ video {
   padding-left: 3rem;
   padding-right: 3rem;
 }
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+.px-3 {
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
@@ -1220,6 +1264,14 @@ video {
 .px-8 {
   padding-left: 2rem;
   padding-right: 2rem;
+}
+.py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 .py-3 {
   padding-top: 0.75rem;
@@ -1246,6 +1298,9 @@ video {
 }
 .pt-12 {
   padding-top: 3rem;
+}
+.pt-4 {
+  padding-top: 1rem;
 }
 .text-center {
   text-align: center;
@@ -1275,6 +1330,9 @@ video {
 .text-7xl {
   font-size: 4.5rem;
   line-height: 1;
+}
+.text-\[10px\] {
+  font-size: 10px;
 }
 .text-lg {
   font-size: 1.125rem;
@@ -1317,6 +1375,9 @@ video {
 .text-moonlight {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+.text-moonlight\/90 {
+  color: rgb(255 255 255 / 0.9);
 }
 .text-transparent {
   color: transparent;
