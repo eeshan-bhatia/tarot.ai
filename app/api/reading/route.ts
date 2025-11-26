@@ -3,17 +3,23 @@ import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedroc
 
 // Lazy initialization of Bedrock client to avoid build-time issues
 function getBedrockClient() {
-  return new BedrockRuntimeClient({
-    region: process.env.AWS_REGION || 'ap-southeast-2',
-    ...(process.env.AWS_ACCESS_KEY_ID && process.env.AWS_SECRET_ACCESS_KEY
-      ? {
-          credentials: {
-            accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-          },
-        }
-      : {}),
-  })
+  const region = process.env.AWS_REGION || 'ap-southeast-2'
+  const accessKeyId = process.env.AWS_ACCESS_KEY_ID
+  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
+  
+  const clientConfig: any = {
+    region,
+  }
+  
+  // Only add credentials if both are provided
+  if (accessKeyId && secretAccessKey) {
+    clientConfig.credentials = {
+      accessKeyId: accessKeyId.trim(),
+      secretAccessKey: secretAccessKey.trim(),
+    }
+  }
+  
+  return new BedrockRuntimeClient(clientConfig)
 }
 
 interface Card {
