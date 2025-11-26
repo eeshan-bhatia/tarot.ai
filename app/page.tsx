@@ -14,12 +14,15 @@ export default function Home() {
   const [selectedCards, setSelectedCards] = useState<(TarotCard | null)[]>([null, null, null])
   const [reading, setReading] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
+  const [showQuestionInputDirectly, setShowQuestionInputDirectly] = useState(false)
+  const [previousQuestion, setPreviousQuestion] = useState<string>('')
 
   const handleQuestionSubmit = (q: string | null) => {
     // q can be: null (not selected), '' (general reading), or string (question)
     setQuestion(q === null ? null : q) // Keep null as null, but allow empty string
     setSelectedCards([null, null, null])
     setReading(null)
+    setShowQuestionInputDirectly(false) // Reset the flag after submission
   }
 
   const handleCardSelect = (card: TarotCard) => {
@@ -53,8 +56,8 @@ export default function Home() {
             question: question && question.trim() !== '' ? question : null,
             cards: validCards.map(card => ({
               name: card.name,
-              meaning: card.isReversed ? card.reversed : card.meaning,
-              keywords: card.isReversed ? card.reversedKeywords : card.keywords,
+              meaning: card.isReversed && card.reversed ? card.reversed : card.meaning,
+              keywords: card.isReversed && card.reversedKeywords ? card.reversedKeywords : card.keywords,
               isReversed: card.isReversed || false,
             })),
           }),
@@ -68,7 +71,10 @@ export default function Home() {
         const data = await response.json()
         setReading(data.reading)
       } catch (error: any) {
-        console.error('Error generating reading:', error)
+        // Only log in development
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error generating reading:', error)
+        }
         const errorMessage = error.message || 'Failed to generate reading. Please try again.'
         alert(errorMessage)
       } finally {
@@ -101,9 +107,14 @@ export default function Home() {
               transition={{ duration: 0.5 }}
               className="text-center mb-8"
             >
-              <h1 className="text-5xl md:text-6xl font-bold mb-4 bg-gradient-to-r from-moonlight via-moon-silver to-lake-blue bg-clip-text text-transparent font-cinzel">
-                Tarot.ai
-              </h1>
+              <button
+                onClick={() => setShowLanding(true)}
+                className="block mb-4"
+              >
+                <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-moonlight via-moon-silver to-lake-blue bg-clip-text text-transparent font-cinzel hover:opacity-80 transition-opacity cursor-pointer">
+                  Tarot.ai
+                </h1>
+              </button>
               <button
                 onClick={() => setShowLanding(true)}
                 className="text-moon-silver hover:text-moonlight transition-colors text-sm"
@@ -115,9 +126,20 @@ export default function Home() {
             {!reading ? (
               <div className="max-w-4xl mx-auto space-y-8">
                 {question === null ? (
-                  <QuestionInput onSubmit={handleQuestionSubmit} />
+                  <QuestionInput 
+                    onSubmit={handleQuestionSubmit} 
+                    initialOption={showQuestionInputDirectly ? 'question' : null}
+                    initialQuestion={showQuestionInputDirectly ? previousQuestion : ''}
+                  />
                 ) : (
                   <>
+                    <CardSelector
+                      selectedCards={selectedCards}
+                      onCardSelect={handleCardSelect}
+                      onCardRemove={handleCardRemove}
+                      canRemoveCards={!reading && !isLoading}
+                    />
+
                     {question && question.trim() !== '' ? (
                       <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
@@ -127,7 +149,11 @@ export default function Home() {
                         <div className="flex items-center justify-between mb-4">
                           <h2 className="text-2xl font-semibold text-moonlight font-cinzel">Your Question</h2>
                           <button
-                            onClick={() => setQuestion(null)}
+                            onClick={() => {
+                              setPreviousQuestion(question) // Save the current question
+                              setShowQuestionInputDirectly(true)
+                              setQuestion(null)
+                            }}
                             className="text-moon-silver hover:text-moonlight transition-colors"
                           >
                             Change
@@ -153,12 +179,6 @@ export default function Home() {
                         <p className="text-moon-silver text-lg italic">A general reading to reveal what the universe wants you to know.</p>
                       </motion.div>
                     )}
-
-                    <CardSelector
-                      selectedCards={selectedCards}
-                      onCardSelect={handleCardSelect}
-                      onCardRemove={handleCardRemove}
-                    />
 
                     {selectedCards.every(card => card !== null) && (
                       <motion.div

@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
 
     const cardDescriptions = cards.map((card: Card, index: number) => {
       const orientation = card.isReversed ? ' (Reversed)' : ' (Upright)'
-      return `Card ${index + 1}: ${card.name}${orientation}\nMeaning: ${card.meaning}\nKeywords: ${card.keywords.join(', ')}`
+      const keywords = Array.isArray(card.keywords) ? card.keywords.join(', ') : (card.keywords || '')
+      return `Card ${index + 1}: ${card.name}${orientation}\nMeaning: ${card.meaning}\nKeywords: ${keywords}`
     }).join('\n\n')
 
     const isGeneralReading = !question || question.trim() === ''

@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { QuestionIcon, CardsIcon, ReadingIcon, CrystalBallIcon, AIIcon, ArtIcon, LightningIcon, MagicOrbIcon } from './Icons'
+import { QuestionIcon, CardsIcon, ReadingIcon } from './Icons'
 
 interface LandingPageProps {
   onGetStarted: () => void
@@ -76,7 +76,7 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             className="ornate-box rounded-2xl p-6 text-center shadow-xl"
           >
             <div className="mb-4 flex justify-center">
-              <MagicOrbIcon size={64} className="text-moonlight" />
+              <QuestionIcon size={64} className="text-moonlight" />
             </div>
             <h3 className="text-2xl font-semibold text-moonlight mb-4 font-cinzel">Ask Your Question</h3>
             <p className="text-moon-silver">
@@ -92,8 +92,94 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
             transition={{ duration: 0.6, delay: 0.6 }}
             className="ornate-box rounded-2xl p-6 text-center shadow-xl"
           >
-            <div className="mb-4 flex justify-center">
-              <CardsIcon size={64} className="text-moonlight" />
+            <div className="mb-4 flex justify-center items-center" style={{ height: '64px' }}>
+              {/* 3 Fanned Out Cards */}
+              <div className="relative flex items-end" style={{ width: '70px', height: '60px' }}>
+                {/* Card 1 - Left */}
+                <div 
+                  className="absolute rounded-lg border-2 border-moonlight/40 shadow-lg z-0"
+                  style={{
+                    width: '32px',
+                    height: '48px',
+                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%)',
+                    left: '0',
+                    transform: 'rotate(-12deg)',
+                    transformOrigin: 'bottom center'
+                  }}
+                >
+                  {/* Ornate border pattern */}
+                  <div className="absolute inset-0 border border-moonlight/20" style={{
+                    backgroundImage: `
+                      repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0.05) 2px),
+                      repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0.05) 2px)
+                    `
+                  }}></div>
+                  {/* Central Star Pattern */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="relative w-4 h-4" style={{
+                      background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
+                      clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)'
+                    }}></div>
+                    <div className="absolute w-1 h-1 bg-moonlight/60 rounded-full"></div>
+                  </div>
+                </div>
+                {/* Card 2 - Center */}
+                <div 
+                  className="absolute rounded-lg border-2 border-moonlight/40 shadow-lg z-10"
+                  style={{
+                    width: '32px',
+                    height: '48px',
+                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%)',
+                    left: '19px',
+                    transform: 'translateY(-3px)',
+                    transformOrigin: 'bottom center'
+                  }}
+                >
+                  {/* Ornate border pattern */}
+                  <div className="absolute inset-0 border border-moonlight/20" style={{
+                    backgroundImage: `
+                      repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0.05) 2px),
+                      repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0.05) 2px)
+                    `
+                  }}></div>
+                  {/* Central Star Pattern */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="relative w-4 h-4" style={{
+                      background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
+                      clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)'
+                    }}></div>
+                    <div className="absolute w-1 h-1 bg-moonlight/60 rounded-full"></div>
+                  </div>
+                </div>
+                {/* Card 3 - Right */}
+                <div 
+                  className="absolute rounded-lg border-2 border-moonlight/40 shadow-lg z-20"
+                  style={{
+                    width: '32px',
+                    height: '48px',
+                    background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%)',
+                    left: '38px',
+                    transform: 'rotate(12deg)',
+                    transformOrigin: 'bottom center'
+                  }}
+                >
+                  {/* Ornate border pattern */}
+                  <div className="absolute inset-0 border border-moonlight/20" style={{
+                    backgroundImage: `
+                      repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0.05) 2px),
+                      repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(255, 255, 255, 0.05) 1px, rgba(255, 255, 255, 0.05) 2px)
+                    `
+                  }}></div>
+                  {/* Central Star Pattern */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="relative w-4 h-4" style={{
+                      background: 'radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%)',
+                      clipPath: 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)'
+                    }}></div>
+                    <div className="absolute w-1 h-1 bg-moonlight/60 rounded-full"></div>
+                  </div>
+                </div>
+              </div>
             </div>
             <h3 className="text-2xl font-semibold text-moonlight mb-4 font-cinzel">Select Your Cards</h3>
             <p className="text-moon-silver">
@@ -118,66 +204,6 @@ export default function LandingPage({ onGetStarted }: LandingPageProps) {
               of your selected cards into a cohesive reading.
             </p>
           </motion.div>
-        </div>
-      </motion.div>
-
-      {/* Features Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
-        className="max-w-4xl mx-auto mb-16"
-      >
-        <div className="ornate-box rounded-3xl p-8 md:p-12 shadow-2xl">
-          <h2 className="text-4xl font-bold text-moonlight mb-8 text-center font-cinzel">
-            Why Choose Tarot.ai?
-          </h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 mt-1">
-                <CrystalBallIcon size={32} className="text-moonlight" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-moonlight mb-2 font-cinzel">Complete Tarot Deck</h3>
-                <p className="text-moon-silver">
-                  Access all 78 traditional tarot cards, including Major and Minor Arcana
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 mt-1">
-                <AIIcon size={32} className="text-moonlight" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-moonlight mb-2 font-cinzel">AI-Powered Insights</h3>
-                <p className="text-moon-silver">
-                  Advanced AI technology provides personalized, thoughtful interpretations
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 mt-1">
-                <ArtIcon size={32} className="text-moonlight" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-moonlight mb-2 font-cinzel">Beautiful Experience</h3>
-                <p className="text-moon-silver">
-                  Immersive, mystical interface that captures the essence of tarot reading
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-4">
-              <div className="flex-shrink-0 mt-1">
-                <LightningIcon size={32} className="text-moonlight" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold text-moonlight mb-2 font-cinzel">Instant Readings</h3>
-                <p className="text-moon-silver">
-                  Get your personalized reading in seconds, anytime you need guidance
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </motion.div>
 

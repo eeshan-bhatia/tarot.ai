@@ -9,8 +9,8 @@ export function QuestionIcon({ className = '', size = 48 }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
       <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.3"/>
-      <path d="M12 8C10.34 8 9 9.34 9 11C9 12.66 10.34 14 12 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-      <circle cx="12" cy="17" r="1" fill="currentColor"/>
+      <path d="M9.09 9C9.3251 8.33167 9.78915 7.76811 10.4 7.40913C11.0108 7.05016 11.7289 6.91894 12.4272 7.03871C13.1255 7.15849 13.7588 7.52152 14.2151 8.06353C14.6713 8.60553 14.9211 9.29152 14.92 10C14.92 12 11.92 13 11.92 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="12" cy="17.5" r="1" fill="currentColor"/>
     </svg>
   )
 }
@@ -26,12 +26,27 @@ export function CardsIcon({ className = '', size = 48 }: IconProps) {
 }
 
 export function ReadingIcon({ className = '', size = 48 }: IconProps) {
+  // Star pattern matching the exact card back design
+  // Using the same polygon points: 50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+  // Scale the star to fit inside the circle, and make center dot larger
+  
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className}>
-      <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2" fill="none" opacity="0.3"/>
-      <path d="M12 4L13.5 9.5L19 11L13.5 12.5L12 18L10.5 12.5L5 11L10.5 9.5L12 4Z" 
-        fill="currentColor" opacity="0.6"/>
-      <circle cx="12" cy="12" r="2" fill="currentColor"/>
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" className={className}>
+      {/* Outer Circle */}
+      <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="1.5" fill="none" opacity="0.4"/>
+      {/* Inner Star - scaled to fit inside circle, centered at 50,50 */}
+      <g transform="translate(50, 50) scale(0.85)">
+        <path 
+          d="M 0 -50 L 11 -15 L 48 -15 L 18 7 L 29 41 L 0 20 L -29 41 L -18 7 L -48 -15 L -11 -15 Z"
+          fill="currentColor" 
+          opacity="0.6"
+          style={{
+            filter: 'drop-shadow(0 0 2px rgba(255, 255, 255, 0.2))'
+          }}
+        />
+      </g>
+      {/* Center Dot - slightly smaller */}
+      <circle cx="50" cy="50" r="15" fill="currentColor" opacity="0.8"/>
     </svg>
   )
 }

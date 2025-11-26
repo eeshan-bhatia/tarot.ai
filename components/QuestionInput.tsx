@@ -1,16 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { MagicOrbIcon, ReadingIcon } from './Icons'
+import { QuestionIcon, ReadingIcon } from './Icons'
 
 interface QuestionInputProps {
   onSubmit: (question: string | null) => void
+  initialOption?: 'question' | 'general' | null
+  initialQuestion?: string
 }
 
-export default function QuestionInput({ onSubmit }: QuestionInputProps) {
-  const [question, setQuestion] = useState('')
-  const [selectedOption, setSelectedOption] = useState<'question' | 'general' | null>(null)
+export default function QuestionInput({ onSubmit, initialOption = null, initialQuestion = '' }: QuestionInputProps) {
+  const [question, setQuestion] = useState(initialQuestion)
+  const [selectedOption, setSelectedOption] = useState<'question' | 'general' | null>(initialOption)
+  
+  // Update question when initialQuestion changes
+  useEffect(() => {
+    setQuestion(initialQuestion)
+  }, [initialQuestion])
 
   const handleQuestionSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,7 +50,7 @@ export default function QuestionInput({ onSubmit }: QuestionInputProps) {
             className="ornate-box rounded-xl p-6 text-center hover:border-moonlight/30 transition-all"
           >
             <div className="mb-4 flex justify-center">
-              <MagicOrbIcon size={56} className="text-moonlight" />
+              <QuestionIcon size={56} className="text-moonlight" />
             </div>
             <h3 className="text-xl font-semibold text-moonlight mb-3 font-cinzel">Ask a Question</h3>
             <p className="text-moon-silver text-sm">
