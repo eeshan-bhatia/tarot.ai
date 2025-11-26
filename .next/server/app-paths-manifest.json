@@ -1,4 +1,4 @@
 {
-  "/api/reading/route": "app/api/reading/route.js",
-  "/page": "app/page.js"
+  "/page": "app/page.js",
+  "/api/reading/route": "app/api/reading/route.js"
 }
