@@ -96,39 +96,39 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
           </div>
 
           {/* Selected Cards Spread - Traditional Layout */}
-          <div className="mb-12">
-            <div className="flex justify-center items-end gap-4 md:gap-8 relative">
+            <div className="mb-12">
+              <div className="flex justify-center items-end gap-4 md:gap-8 relative">
               {Array.from({ length: 3 }).map((_, index) => {
-                const positions = [
+                  const positions = [
                   { rotate: -15, x: -20, y: 0, label: 'Past' },
                   { rotate: 0, x: 0, y: -15, label: 'Present' },
                   { rotate: 15, x: 20, y: 0, label: 'Future' }
-                ]
+                  ]
                 const pos = positions[index] || { rotate: 0, x: 0, y: 0, label: '' }
                 const card = selectedCards[index]
-                
-                return (
-                  <motion.div
+                  
+                  return (
+                    <motion.div
                     key={`position-${index}-${card?.id ?? 'empty'}`}
-                    initial={{ scale: 0, rotate: -180, y: 100 }}
-                    animate={{ 
-                      scale: 1, 
-                      rotate: pos.rotate,
+                      initial={{ scale: 0, rotate: -180, y: 100 }}
+                      animate={{ 
+                        scale: 1, 
+                        rotate: pos.rotate,
                       y: pos.y,
-                      x: pos.x
-                    }}
-                    transition={{ 
-                      type: "spring",
-                      stiffness: 200,
-                      damping: 15
-                    }}
-                    className="relative group"
-                  >
-                    {/* Card Position Label */}
+                        x: pos.x
+                      }}
+                      transition={{ 
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 15
+                      }}
+                      className="relative group"
+                    >
+                      {/* Card Position Label */}
                     <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-sm md:text-base text-moon-silver font-bold font-cinzel whitespace-nowrap">
-                      {pos.label}
-                    </div>
-                    
+                        {pos.label}
+                      </div>
+                      
                     {card ? (
                       /* Selected Card - Traditional Tarot Design with Full-Card Remove */
                       <button
@@ -138,13 +138,13 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
                           canRemoveCards ? 'cursor-pointer' : 'cursor-default'
                         }`}
                         style={{
-                          background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%)'
+                        background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%)'
                         }}
                       >
                         {/* Greyed Out Overlay on Hover - Only show if cards can be removed */}
                         {canRemoveCards && (
                           <div className="absolute inset-0 bg-black/60 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300 z-30 flex items-center justify-center rounded-lg">
-                            <span className="text-moonlight font-semibold text-sm md:text-base font-cinzel">
+                            <span className="text-moonlight font-semibold text-sm md:text-base font-sans">
                               Remove
                             </span>
                           </div>
@@ -152,7 +152,7 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
 
                         {/* Ornate Border Pattern */}
                         <div className="absolute inset-0 border border-moonlight/20" style={{
-                          backgroundImage: `
+                            backgroundImage: `
                             repeating-linear-gradient(0deg, transparent, transparent 1px, rgba(255, 255, 255, 0.06) 1px, rgba(255, 255, 255, 0.06) 2px),
                             repeating-linear-gradient(90deg, transparent, transparent 1px, rgba(255, 255, 255, 0.06) 1px, rgba(255, 255, 255, 0.06) 2px)
                           `
@@ -176,16 +176,16 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
                           {/* Center Dot */}
                           <div className="absolute w-1.5 h-1.5 md:w-2 md:h-2 bg-moonlight/50 rounded-full"></div>
                         </div>
-                      </button>
+                        </button>
                     ) : (
                       /* Placeholder Card - Simple dotted design */
                       <div
                         className="aspect-[2/3] w-24 md:w-32 rounded-lg border-2 border-dashed border-moonlight/20 bg-midnight-deep/20"
                       />
                     )}
-                  </motion.div>
-                )
-              })}
+                    </motion.div>
+                  )
+                })}
             </div>
           </div>
 
@@ -206,9 +206,9 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
                       
                       // Pre-calculate positions for all cards
                       const cardPositions = displayCards.map((_, index) => {
-                        const offset = index - centerIndex
-                        const maxOffset = centerIndex
-                        const rotation = maxOffset > 0 ? (offset / maxOffset) * 30 : 0
+                      const offset = index - centerIndex
+                      const maxOffset = centerIndex
+                      const rotation = maxOffset > 0 ? (offset / maxOffset) * 30 : 0
                         const zIndex = totalCards - Math.abs(offset)
                         const distanceFromCenter = Math.abs(offset)
                         const delay = distanceFromCenter * 0.04
@@ -220,9 +220,9 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
                         const disabled = validCards.length >= 3 || isCardSelected
                         const { rotation, zIndex, delay } = cardPositions[index]
                       
-                        return (
-                          <motion.button
-                            key={card.id}
+                      return (
+                        <motion.button
+                          key={card.id}
                             initial={{ 
                               opacity: 0, 
                               scale: 0.8, 
@@ -230,8 +230,8 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
                               x: 0,
                               y: 20
                             }}
-                            animate={{ 
-                              opacity: disabled ? 0.3 : 1,
+                          animate={{ 
+                            opacity: disabled ? 0.3 : 1,
                               scale: 1,
                               rotate: rotation,
                               x: 0,
@@ -242,31 +242,31 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
                               stiffness: 100,
                               damping: 15,
                               delay: delay // Stagger from center outward
-                            }}
+                          }}
                             whileHover={!disabled ? { 
-                              scale: 1.2, 
-                              rotate: rotation + 5,
-                              zIndex: 1000,
-                              y: -15
-                            } : {}}
-                            whileTap={!disabled ? { scale: 0.95 } : {}}
+                            scale: 1.2, 
+                            rotate: rotation + 5,
+                            zIndex: 1000,
+                            y: -15
+                          } : {}}
+                          whileTap={!disabled ? { scale: 0.95 } : {}}
                             onClick={() => handlePlaceholderClick(card)}
-                            disabled={disabled}
-                            className={`
-                              relative aspect-[2/3] w-10 md:w-14 rounded-md transition-all overflow-hidden flex-shrink-0
-                              ${index > 0 ? 'md:-ml-[39px]' : ''}
+                          disabled={disabled}
+                          className={`
+                              relative aspect-[2/3] w-10 md:w-14 rounded-md transition-all overflow-hidden flex-shrink-0 font-sans
+                            ${index > 0 ? 'md:-ml-[39px]' : ''}
                               ${disabled
                                 ? 'cursor-not-allowed'
                                 : 'hover:shadow-xl cursor-pointer'
-                              }
-                            `}
-                            style={{
+                            }
+                          `}
+                          style={{
                               background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #16213e 75%, #1a1a2e 100%)',
                               zIndex: zIndex,
-                              transformOrigin: 'center bottom',
-                              marginLeft: index === 0 ? 0 : `-${overlapMobile}px`
-                            }}
-                          >
+                            transformOrigin: 'center bottom',
+                            marginLeft: index === 0 ? 0 : `-${overlapMobile}px`
+                          }}
+                        >
                           {/* Traditional Tarot Card Back Design - Placeholder - Type 3 design, scaled for smaller cards */}
                           {/* Ornate Border Pattern */}
                           <div className="absolute inset-0 border border-moonlight/20" style={{
@@ -294,8 +294,8 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
                             {/* Center Dot - Scaled proportionally: w-1.5->w-0.5, w-2->w-0.75 (using w-0.5 md:w-1) */}
                             <div className="absolute w-0.5 h-0.5 md:w-1 md:h-1 bg-moonlight/50 rounded-full"></div>
                           </div>
-                          </motion.button>
-                        )
+                        </motion.button>
+                      )
                       })
                     })()}
                   </AnimatePresence>

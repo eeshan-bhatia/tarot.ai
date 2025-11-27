@@ -3,6 +3,9 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import LandingPage from '@/components/LandingPage'
+import AboutPage from '@/components/AboutPage'
+import Navbar from '@/components/Navbar'
+import LightRays from '@/components/LightRays'
 import QuestionInput from '@/components/QuestionInput'
 import CardSelector from '@/components/CardSelector'
 import ReadingDisplay from '@/components/ReadingDisplay'
@@ -10,6 +13,7 @@ import { TarotCard } from '@/data/tarotCards'
 
 export default function Home() {
   const [showLanding, setShowLanding] = useState(true)
+  const [showAbout, setShowAbout] = useState(false)
   const [question, setQuestion] = useState<string | null>(null) // null = not selected, '' = general reading, string = question
   const [selectedCards, setSelectedCards] = useState<(TarotCard | null)[]>([null, null, null])
   const [reading, setReading] = useState<string | null>(null)
@@ -92,36 +96,52 @@ export default function Home() {
 
   const handleGetStarted = () => {
     setShowLanding(false)
+    setShowAbout(false)
+  }
+
+  const handleAbout = () => {
+    setShowAbout(true)
+    setShowLanding(false)
+  }
+
+  const handleBackToHome = () => {
+    setShowLanding(true)
+    setShowAbout(false)
   }
 
   return (
     <main className="min-h-screen relative">
-      <div className="container mx-auto px-4 py-8">
-        {showLanding ? (
-          <LandingPage onGetStarted={handleGetStarted} />
-        ) : (
-          <>
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-center mb-8"
-            >
-              <button
-                onClick={() => setShowLanding(true)}
-                className="block mb-4"
-              >
-                <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-moonlight via-moon-silver to-lake-blue bg-clip-text text-transparent font-cinzel hover:opacity-80 transition-opacity cursor-pointer">
-                  Tarot.ai
-                </h1>
-              </button>
-              <button
-                onClick={() => setShowLanding(true)}
-                className="text-moon-silver hover:text-moonlight transition-colors text-sm"
-              >
-                ← Back to Home
-              </button>
-            </motion.div>
+      {showAbout ? (
+        <AboutPage onBack={handleBackToHome} />
+      ) : showLanding ? (
+        <LandingPage onGetStarted={handleGetStarted} onAbout={handleAbout} />
+      ) : (
+        <>
+          {/* LightRays Background */}
+          <div className="fixed inset-0 w-full h-full z-0">
+            <LightRays
+              raysOrigin="top-center"
+              raysColor="#ffffff"
+              raysSpeed={1.5}
+              lightSpread={0.8}
+              rayLength={1.2}
+              followMouse={true}
+              mouseInfluence={0.5}
+              noiseAmount={0.1}
+              distortion={0.05}
+              className="custom-rays"
+            />
+          </div>
+          
+          <Navbar 
+            onHome={() => {
+              setShowLanding(true)
+              setShowAbout(false)
+            }}
+            onAbout={handleAbout}
+            currentPage="reading"
+          />
+          <div className="container mx-auto px-4 py-8 relative z-10">
 
             {!reading ? (
               <div className="max-w-4xl mx-auto space-y-8">
@@ -154,7 +174,7 @@ export default function Home() {
                               setShowQuestionInputDirectly(true)
                               setQuestion(null)
                             }}
-                            className="text-moon-silver hover:text-moonlight transition-colors"
+                            className="text-moon-silver hover:text-moonlight transition-colors font-sans"
                           >
                             Change
                           </button>
@@ -171,7 +191,7 @@ export default function Home() {
                           <h2 className="text-2xl font-semibold text-moonlight font-cinzel">General Reading</h2>
                           <button
                             onClick={() => setQuestion(null)}
-                            className="text-moon-silver hover:text-moonlight transition-colors"
+                            className="text-moon-silver hover:text-moonlight transition-colors font-sans"
                           >
                             Change
                           </button>
@@ -189,7 +209,7 @@ export default function Home() {
                         <button
                           onClick={handleGetReading}
                           disabled={isLoading}
-                          className="px-8 py-4 bg-gradient-to-r from-lake-blue via-mystic-purple to-lake-deep text-white text-xl font-semibold rounded-full hover:from-blue-500 hover:via-indigo-500 hover:to-blue-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-lake-blue/50"
+                          className="px-8 py-4 bg-gradient-to-r from-lake-blue via-mystic-purple to-lake-deep text-white text-xl font-semibold rounded-full hover:from-blue-500 hover:via-indigo-500 hover:to-blue-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-lake-blue/50 font-sans"
                         >
                           {isLoading ? 'Reading the cards...' : 'Get Your Reading'}
                         </button>
@@ -206,9 +226,9 @@ export default function Home() {
                 onReset={handleReset}
               />
             )}
-          </>
-        )}
-      </div>
+          </div>
+        </>
+      )}
     </main>
   )
 }

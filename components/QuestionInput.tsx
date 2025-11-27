@@ -35,23 +35,36 @@ export default function QuestionInput({ onSubmit, initialOption = null, initialQ
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.6 }}
         className="ornate-box rounded-2xl p-8 shadow-2xl"
       >
-        <h2 className="text-3xl font-bold text-moonlight mb-8 text-center font-cinzel">
+        <motion.h2
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-3xl font-bold text-moonlight mb-8 text-center font-cinzel"
+        >
           Choose Your Reading Type
-        </h2>
+        </motion.h2>
         <div className="grid md:grid-cols-2 gap-6">
           {/* Ask a Question Option */}
           <motion.button
-            whileHover={{ scale: 1.02 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => setSelectedOption('question')}
-            className="ornate-box rounded-xl p-6 text-center hover:border-moonlight/30 transition-all"
+            className="ornate-box rounded-xl p-6 text-center hover:border-moonlight/30 transition-all font-sans"
           >
-            <div className="mb-4 flex justify-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mb-4 flex justify-center"
+            >
               <QuestionIcon size={56} className="text-moonlight" />
-            </div>
+            </motion.div>
             <h3 className="text-xl font-semibold text-moonlight mb-3 font-cinzel">Ask a Question</h3>
             <p className="text-moon-silver text-sm">
               Ask a specific question about your life, relationships, career, or any area where you seek guidance.
@@ -60,14 +73,22 @@ export default function QuestionInput({ onSubmit, initialOption = null, initialQ
 
           {/* General Reading Option */}
           <motion.button
-            whileHover={{ scale: 1.02 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            whileHover={{ scale: 1.02, y: -2 }}
             whileTap={{ scale: 0.98 }}
             onClick={handleGeneralReading}
-            className="ornate-box rounded-xl p-6 text-center hover:border-moonlight/30 transition-all"
+            className="ornate-box rounded-xl p-6 text-center hover:border-moonlight/30 transition-all font-sans"
           >
-            <div className="mb-4 flex justify-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="mb-4 flex justify-center"
+            >
               <ReadingIcon size={56} className="text-moonlight" />
-            </div>
+            </motion.div>
             <h3 className="text-xl font-semibold text-moonlight mb-3 font-cinzel">General Reading</h3>
             <p className="text-moon-silver text-sm">
               Receive a general tarot reading that reveals insights about your current path and what the universe wants you to know.
@@ -82,32 +103,46 @@ export default function QuestionInput({ onSubmit, initialOption = null, initialQ
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.6 }}
       className="ornate-box rounded-2xl p-8 shadow-2xl"
     >
-      <div className="flex items-center justify-between mb-6">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="flex items-center justify-between mb-6"
+      >
         <h2 className="text-3xl font-bold text-moonlight font-cinzel">
           What would you like to know?
         </h2>
-        <button
+        <motion.button
+          initial={{ opacity: 0, x: 10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           onClick={() => setSelectedOption(null)}
-          className="text-moon-silver hover:text-moonlight transition-colors text-sm"
+          className="text-moon-silver hover:text-moonlight transition-colors text-sm font-sans"
         >
           ← Back
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
       <form onSubmit={handleQuestionSubmit} className="space-y-4">
-        <textarea
+        <motion.textarea
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
           placeholder="Ask your question... (e.g., What should I focus on in my career? How can I improve my relationships?)"
           className="w-full h-32 px-4 py-3 bg-midnight-deep/50 backdrop-blur-sm border border-moonlight/20 rounded-xl text-moonlight placeholder-moon-silver/50 focus:outline-none focus:ring-2 focus:ring-lake-blue focus:border-transparent resize-none"
         />
         <motion.button
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
           type="submit"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="w-full px-6 py-4 bg-gradient-to-r from-lake-blue via-mystic-purple to-lake-deep text-white text-lg font-semibold rounded-xl hover:from-blue-500 hover:via-indigo-500 hover:to-blue-700 transition-all shadow-lg shadow-lake-blue/30"
+          className="w-full px-6 py-4 bg-gradient-to-r from-lake-blue via-mystic-purple to-lake-deep text-white text-lg font-semibold rounded-xl hover:from-blue-500 hover:via-indigo-500 hover:to-blue-700 transition-all shadow-lg shadow-lake-blue/30 font-sans"
         >
           Continue to Card Selection
         </motion.button>

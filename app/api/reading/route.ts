@@ -109,8 +109,8 @@ Begin immediately with the first card's interpretation. Do not include any intro
             {
               type: 'text',
               text: prompt,
-            },
-          ],
+        },
+      ],
         },
       ],
     }
@@ -124,7 +124,7 @@ Begin immediately with the first card's interpretation. Do not include any intro
       accept: 'application/json',
       body: JSON.stringify(bedrockPayload),
     })
-    
+
     const response = await bedrockClient.send(command)
     const responseBody = JSON.parse(new TextDecoder().decode(response.body))
     
