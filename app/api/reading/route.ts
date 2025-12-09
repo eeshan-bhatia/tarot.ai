@@ -3,9 +3,10 @@ import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedroc
 
 // Lazy initialization of Bedrock client to avoid build-time issues
 function getBedrockClient() {
-  const region = process.env.AWS_REGION || 'ap-southeast-2'
-  const accessKeyId = process.env.AWS_ACCESS_KEY_ID
-  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY
+  // Amplify doesn't allow env vars starting with "AWS", so we use custom names
+  const region = process.env.AWS_REGION || process.env.REGION || 'ap-southeast-2'
+  const accessKeyId = process.env.AWS_ACCESS_KEY_ID || process.env.ACCESS_KEY_ID
+  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || process.env.SECRET_ACCESS_KEY
   
   const clientConfig: any = {
     region,
@@ -13,7 +14,7 @@ function getBedrockClient() {
   
   // Only add credentials if both are provided
   // If not provided, AWS SDK will use default credential chain:
-  // 1. Environment variables
+  // 1. Environment variables (AWS_ prefixed, if allowed)
   // 2. IAM role (for EC2, Lambda, ECS, Amplify)
   // 3. AWS credentials file
   if (accessKeyId && secretAccessKey) {
@@ -93,7 +94,7 @@ Begin immediately with the Past card's interpretation. Do not include any introd
     // Try: 'anthropic.claude-3-sonnet-20240229-v1:0' or 'anthropic.claude-3-sonnet-20240229-v1'
     // or just 'anthropic.claude-3-sonnet-20240229-v1' depending on what's available
     let modelId = process.env.BEDROCK_MODEL_ID || 'anthropic.claude-3-sonnet-20240229-v1:0'
-    const region = process.env.AWS_REGION || 'ap-southeast-2'
+    const region = process.env.AWS_REGION || process.env.REGION || 'ap-southeast-2'
     
     // Remove version suffix if present and try base model ID
     // Some regions require the model ID without the :0 suffix
