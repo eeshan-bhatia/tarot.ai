@@ -12,11 +12,19 @@ function getBedrockClient() {
   }
   
   // Only add credentials if both are provided
+  // If not provided, AWS SDK will use default credential chain:
+  // 1. Environment variables
+  // 2. IAM role (for EC2, Lambda, ECS, Amplify)
+  // 3. AWS credentials file
   if (accessKeyId && secretAccessKey) {
     clientConfig.credentials = {
       accessKeyId: accessKeyId.trim(),
       secretAccessKey: secretAccessKey.trim(),
     }
+  } else {
+    // Explicitly use default credential provider chain
+    // This ensures IAM roles work in Amplify/Lambda environments
+    // The SDK will automatically use the service role's credentials
   }
   
   return new BedrockRuntimeClient(clientConfig)
