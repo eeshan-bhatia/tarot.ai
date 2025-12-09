@@ -8,6 +8,15 @@ function getBedrockClient() {
   const accessKeyId = process.env.AWS_ACCESS_KEY_ID || process.env.ACCESS_KEY_ID
   const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || process.env.SECRET_ACCESS_KEY
   
+  // Debug logging (only show first/last chars of keys for security)
+  if (process.env.NODE_ENV === 'development' || process.env.AMPLIFY_ENV) {
+    console.log('Bedrock Client Config:')
+    console.log('- Region:', region)
+    console.log('- Access Key ID present:', !!accessKeyId, accessKeyId ? `${accessKeyId.substring(0, 4)}...${accessKeyId.substring(accessKeyId.length - 4)}` : 'none')
+    console.log('- Secret Key present:', !!secretAccessKey, secretAccessKey ? '***' : 'none')
+    console.log('- Using credentials:', !!(accessKeyId && secretAccessKey))
+  }
+  
   const clientConfig: any = {
     region,
   }
@@ -18,14 +27,24 @@ function getBedrockClient() {
   // 2. IAM role (for EC2, Lambda, ECS, Amplify)
   // 3. AWS credentials file
   if (accessKeyId && secretAccessKey) {
+    const trimmedKeyId = accessKeyId.trim()
+    const trimmedSecret = secretAccessKey.trim()
+    
+    // Validate credentials format
+    if (trimmedKeyId.length < 16 || trimmedSecret.length < 16) {
+      console.error('Invalid credential format detected')
+      throw new Error('Invalid AWS credentials format. Please check your ACCESS_KEY_ID and SECRET_ACCESS_KEY environment variables.')
+    }
+    
     clientConfig.credentials = {
-      accessKeyId: accessKeyId.trim(),
-      secretAccessKey: secretAccessKey.trim(),
+      accessKeyId: trimmedKeyId,
+      secretAccessKey: trimmedSecret,
     }
   } else {
     // Explicitly use default credential provider chain
     // This ensures IAM roles work in Amplify/Lambda environments
     // The SDK will automatically use the service role's credentials
+    console.log('No explicit credentials found, using default credential chain (IAM role)')
   }
   
   return new BedrockRuntimeClient(clientConfig)
@@ -170,8 +189,17 @@ Begin immediately with the Past card's interpretation. Do not include any introd
     } else if (error.name === 'ValidationException') {
       errorMessage = `Validation error: ${errorMsg || error.name}. This might indicate an issue with the request format or model ID.`
       statusCode = 400
-    } else if (error.name === 'AccessDeniedException') {
-      errorMessage = `Access denied: ${errorMsg || error.name}. Please check your AWS credentials and Bedrock permissions.`
+    } else if (error.name === 'AccessDeniedException' || error.name === 'UnrecognizedClientException') {
+      errorMessage = `Access denied: ${errorMsg || error.name}. This usually means:
+1. Your AWS credentials are invalid or expired
+2. Your credentials don't have Bedrock permissions
+3. There's a typo in your ACCESS_KEY_ID or SECRET_ACCESS_KEY environment variables
+4. The IAM user/role doesn't have the required Bedrock policy attached
+
+Please verify:
+- Your ACCESS_KEY_ID and SECRET_ACCESS_KEY are correct in Amplify environment variables
+- The IAM user/role has the TarotAIBedrockPolicy attached
+- Bedrock model access is enabled in your AWS account`
       statusCode = 403
     } else if (error.name === 'ResourceNotFoundException' || error.$metadata?.httpStatusCode === 404) {
       errorMessage = `Model not found: ${errorMsg || 'The specified model ID may not be available in this region or may need to be enabled.'}`
