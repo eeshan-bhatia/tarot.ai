@@ -9,9 +9,11 @@ interface CardSelectorProps {
   onCardSelect: (card: TarotCard) => void
   onCardRemove: (position: number) => void
   canRemoveCards?: boolean
+  onGetReading?: () => void
+  isLoading?: boolean
 }
 
-export default function CardSelector({ selectedCards, onCardSelect, onCardRemove, canRemoveCards = true }: CardSelectorProps) {
+export default function CardSelector({ selectedCards, onCardSelect, onCardRemove, canRemoveCards = true, onGetReading, isLoading = false }: CardSelectorProps) {
   const [availableCards, setAvailableCards] = useState<TarotCard[]>([])
   const [displayCards, setDisplayCards] = useState<TarotCard[]>([]) // 26 cards to display
 
@@ -78,7 +80,7 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
       className="relative"
     >
       {/* Table Surface - Moonlit Lake */}
-      <div className="relative bg-gradient-to-br from-midnight-black/80 via-midnight-deep/70 to-midnight-blue/60 backdrop-blur-xl rounded-3xl p-8 md:p-12 border border-moonlight/20 shadow-2xl">
+      <div className="relative bg-gradient-to-br from-midnight-black/80 via-midnight-deep/70 to-midnight-blue/60 backdrop-blur-xl rounded-3xl p-5 md:p-7 border border-moonlight/20 shadow-2xl">
         {/* Water Ripple Effect */}
         <div className="absolute inset-0 rounded-3xl opacity-20" style={{
           backgroundImage: `radial-gradient(circle at 30% 50%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
@@ -86,17 +88,17 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
         }}></div>
         
         <div className="relative z-10">
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-semibold text-moonlight mb-2 font-cinzel">
+          <div className="text-center mb-6">
+            <h2 className="text-xl md:text-2xl font-semibold text-moonlight mb-2 font-cinzel">
               Select 3 Cards
             </h2>
-            <p className="text-moon-silver">
+            <p className="text-moon-silver text-sm">
               {selectedCards.filter((card): card is TarotCard => card !== null).length} of 3 cards selected
             </p>
           </div>
 
           {/* Selected Cards Spread - Traditional Layout */}
-            <div className="mb-12">
+            <div className="mb-8">
               <div className="flex justify-center items-end gap-4 md:gap-8 relative">
               {Array.from({ length: 3 }).map((_, index) => {
                   const positions = [
@@ -190,7 +192,7 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
           </div>
 
           {/* Deck - Fanned Out Placeholder Cards */}
-          <div className="relative min-h-[200px] flex items-center justify-center overflow-x-auto pb-4 -mx-4 px-4">
+          <div className="relative min-h-[150px] flex items-center justify-center overflow-x-auto pb-2 -mx-4 px-4">
             <div className="relative inline-flex">
               {/* Fanned Card Layout - Single Horizontal Line with Overlap */}
               <div className="relative flex items-center justify-center" style={{ perspective: '1000px' }}>
@@ -302,6 +304,25 @@ export default function CardSelector({ selectedCards, onCardSelect, onCardRemove
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Get Your Reading Button - Always reserve space */}
+          <div className="text-center mt-2" style={{ minHeight: '60px' }}>
+            {selectedCards.every(card => card !== null) && onGetReading && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+              >
+                <button
+                  onClick={onGetReading}
+                  disabled={isLoading}
+                  className="px-8 py-4 bg-white text-gray-900 rounded-full font-semibold text-xl hover:bg-gray-100 transition-all backdrop-blur-sm disabled:opacity-50 disabled:cursor-not-allowed font-sans"
+                >
+                  {isLoading ? 'Reading the cards...' : 'Get Your Reading'}
+                </button>
+              </motion.div>
+            )}
           </div>
         </div>
       </div>

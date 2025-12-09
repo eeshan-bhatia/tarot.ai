@@ -45,3 +45,4 @@ export default function Navbar({ onHome, onAbout, currentPage = 'home' }: Navbar
   )
 }
 
+

@@ -142,7 +142,7 @@ export default function QuestionInput({ onSubmit, initialOption = null, initialQ
           type="submit"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          className="w-full px-6 py-4 bg-gradient-to-r from-lake-blue via-mystic-purple to-lake-deep text-white text-lg font-semibold rounded-xl hover:from-blue-500 hover:via-indigo-500 hover:to-blue-700 transition-all shadow-lg shadow-lake-blue/30 font-sans"
+          className="w-full px-6 py-4 bg-white text-gray-900 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all backdrop-blur-sm font-sans"
         >
           Continue to Card Selection
         </motion.button>

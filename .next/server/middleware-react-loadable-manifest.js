@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{\"components/LightRays.tsx -> ogl\":{\"id\":\"components/LightRays.tsx -> ogl\",\"files\":[\"static/chunks/_app-pages-browser_node_modules_ogl_src_index_js.js\"]},\"components/Prism.tsx -> ogl\":{\"id\":\"components/Prism.tsx -> ogl\",\"files\":[\"static/chunks/_app-pages-browser_node_modules_ogl_src_index_js.js\"]}}"
+self.__REACT_LOADABLE_MANIFEST="{}"

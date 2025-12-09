@@ -158,6 +158,8 @@ export default function Home() {
                       onCardSelect={handleCardSelect}
                       onCardRemove={handleCardRemove}
                       canRemoveCards={!reading && !isLoading}
+                      onGetReading={handleGetReading}
+                      isLoading={isLoading}
                     />
 
                     {question && question.trim() !== '' ? (
@@ -197,22 +199,6 @@ export default function Home() {
                           </button>
                         </div>
                         <p className="text-moon-silver text-lg italic">A general reading to reveal what the universe wants you to know.</p>
-                      </motion.div>
-                    )}
-
-                    {selectedCards.every(card => card !== null) && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-center"
-                      >
-                        <button
-                          onClick={handleGetReading}
-                          disabled={isLoading}
-                          className="px-8 py-4 bg-gradient-to-r from-lake-blue via-mystic-purple to-lake-deep text-white text-xl font-semibold rounded-full hover:from-blue-500 hover:via-indigo-500 hover:to-blue-700 transition-all transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-2xl shadow-lake-blue/50 font-sans"
-                        >
-                          {isLoading ? 'Reading the cards...' : 'Get Your Reading'}
-                        </button>
                       </motion.div>
                     )}
                   </>

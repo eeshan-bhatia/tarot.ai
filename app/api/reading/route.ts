@@ -44,37 +44,41 @@ export async function POST(request: NextRequest) {
     // The Bedrock client will automatically use the default credential chain if
     // AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY are not provided
 
+    const positions = ['Past', 'Present', 'Future']
     const cardDescriptions = cards.map((card: Card, index: number) => {
       const orientation = card.isReversed ? ' (Reversed)' : ' (Upright)'
       const keywords = Array.isArray(card.keywords) ? card.keywords.join(', ') : (card.keywords || '')
-      return `Card ${index + 1}: ${card.name}${orientation}\nMeaning: ${card.meaning}\nKeywords: ${keywords}`
+      const position = positions[index] || `Position ${index + 1}`
+      return `${position} - ${card.name}${orientation}\nMeaning: ${card.meaning}\nKeywords: ${keywords}`
     }).join('\n\n')
 
     const isGeneralReading = !question || question.trim() === ''
 
     const prompt = isGeneralReading
-      ? `Interpret these three tarot cards for a general reading:
+      ? `Interpret these three tarot cards for a general reading. Each card is positioned to represent Past, Present, and Future:
 
 ${cardDescriptions}
 
 Provide exactly 4 paragraphs:
-1. First paragraph: Interpret Card 1 (${cards[0].name}) and its meaning in their life
-2. Second paragraph: Interpret Card 2 (${cards[1].name}) and its meaning in their life
-3. Third paragraph: Interpret Card 3 (${cards[2].name}) and its meaning in their life
-4. Fourth paragraph: Conclude by explaining what all three cards collectively suggest about their journey and offer guidance. Then, on a separate paragraph, provide a poignant, inspiring quote (in quotation marks) that relates to what the cards point towards - this can be from literature, philosophy, wisdom traditions, or your own creation, but it should be meaningful and relevant to the reading.
+1. First paragraph: Interpret the Past card (${cards[0].name}). Explain how this card represents past experiences, influences, or events that have shaped their current situation. Connect the card's meaning to what has come before in their life.
+2. Second paragraph: Interpret the Present card (${cards[1].name}). Explain how this card represents their current circumstances, state of being, or what is happening now in their life. Focus on the immediate situation and current energies.
+3. Third paragraph: Interpret the Future card (${cards[2].name}). Explain how this card represents potential outcomes, future possibilities, or what may come to pass. Discuss what this card suggests about the path ahead.
+4. Fourth paragraph: Conclude by explaining how the Past, Present, and Future cards work together to tell a complete story about their journey. Show how the past has led to the present, and how the present influences the future. Offer guidance based on this temporal progression. Then, on a separate paragraph, provide a poignant, inspiring quote (in quotation marks) that relates to what the cards point towards. The quote MUST be from an actual person (author, philosopher, poet, historical figure, etc.) and MUST include attribution in the format " - [Name]" at the end. Do not create or invent quotes - only use real, existing quotes from real people.
 
-Begin immediately with the first card's interpretation. Do not include any introductory phrases or acknowledgments - start directly with Card 1. Be specific and personal.`
+Begin immediately with the Past card's interpretation. Do not include any introductory phrases or acknowledgments - start directly with the Past card. Be specific and personal, and always contextualize each card within its temporal position.`
       : `Interpret these three tarot cards in response to this question: "${question}"
 
+Each card is positioned to represent Past, Present, and Future:
+
 ${cardDescriptions}
 
 Provide exactly 4 paragraphs:
-1. First paragraph: Interpret Card 1 (${cards[0].name}). First explain the card's general meaning and symbolism, then explain how it specifically relates to their question and what it reveals about their situation
-2. Second paragraph: Interpret Card 2 (${cards[1].name}). First explain the card's general meaning and symbolism, then explain how it specifically relates to their question and what it reveals about their situation
-3. Third paragraph: Interpret Card 3 (${cards[2].name}). First explain the card's general meaning and symbolism, then explain how it specifically relates to their question and what it reveals about their situation
-4. Fourth paragraph: Conclude by explaining what all three cards collectively suggest about the answer to their question and offer practical guidance. Then, on a separate paragraph, provide a poignant, inspiring quote (in quotation marks) that relates to their question and/or what the cards point towards - this can be from literature, philosophy, wisdom traditions, or your own creation, but it should be meaningful and relevant to both the question and the reading.
+1. First paragraph: Interpret the Past card (${cards[0].name}). First explain the card's general meaning and symbolism, then explain how it specifically relates to their question in the context of past events, experiences, or influences that have led to their current situation regarding this question.
+2. Second paragraph: Interpret the Present card (${cards[1].name}). First explain the card's general meaning and symbolism, then explain how it specifically relates to their question in the context of their current circumstances, what is happening now, or the immediate situation regarding this question.
+3. Third paragraph: Interpret the Future card (${cards[2].name}). First explain the card's general meaning and symbolism, then explain how it specifically relates to their question in the context of potential outcomes, future possibilities, or what may come to pass regarding this question.
+4. Fourth paragraph: Conclude by explaining how the Past, Present, and Future cards collectively answer their question. Show how past influences have shaped the current situation, how the present moment affects future outcomes, and offer practical guidance based on this temporal understanding. Then, on a separate paragraph, provide a poignant, inspiring quote (in quotation marks) that relates to their question and/or what the cards point towards. The quote MUST be from an actual person (author, philosopher, poet, historical figure, etc.) and MUST include attribution in the format " - [Name]" at the end. Do not create or invent quotes - only use real, existing quotes from real people.
 
-Begin immediately with the first card's interpretation. Do not include any introductory phrases or acknowledgments - start directly with Card 1. Be specific and personal.`
+Begin immediately with the Past card's interpretation. Do not include any introductory phrases or acknowledgments - start directly with the Past card. Be specific and personal, and always contextualize each card within its temporal position (Past, Present, or Future) when relating it to their question.`
 
     // Use Claude model via Bedrock (you can change this to other Bedrock models)
     // Note: Model IDs in Bedrock sometimes need to be without the version suffix

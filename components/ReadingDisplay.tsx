@@ -74,30 +74,59 @@ export default function ReadingDisplay({ question, selectedCards, reading, onRes
     // Check if the quote paragraph is actually a quote (contains quotation marks or is short and meaningful)
     let finalQuote = ''
     if (quoteText) {
-      // If it's wrapped in quotes or starts/ends with quotes, extract it
-      const quoteMatch = quoteText.match(/"([^"]+)"/)
-      if (quoteMatch) {
-        finalQuote = quoteMatch[1]
-      } else if (quoteText.length < 200 && (quoteText.startsWith('"') || quoteText.includes('"'))) {
-        // Likely a quote even if not perfectly formatted
-        finalQuote = quoteText.replace(/^["']|["']$/g, '').trim()
-      } else if (quoteText.length < 150) {
-        // Short paragraph might be a quote
-        finalQuote = quoteText.replace(/^["']|["']$/g, '').trim()
+      // Try to match quote with attribution: "Quote text" - Author Name
+      const quoteWithAttributionMatch = quoteText.match(/"([^"]+)"\s*-\s*(.+)/)
+      if (quoteWithAttributionMatch) {
+        finalQuote = `"${quoteWithAttributionMatch[1]}" - ${quoteWithAttributionMatch[2].trim()}`
+      } else {
+        // If it's wrapped in quotes or starts/ends with quotes, extract it (including any attribution after)
+        const quoteMatch = quoteText.match(/"([^"]+)"/)
+        if (quoteMatch) {
+          // Check if there's attribution after the quote
+          const afterQuote = quoteText.substring(quoteMatch.index! + quoteMatch[0].length).trim()
+          if (afterQuote.startsWith('-')) {
+            finalQuote = `"${quoteMatch[1]}" ${afterQuote}`
+          } else {
+            finalQuote = `"${quoteMatch[1]}"`
+          }
+        } else if (quoteText.length < 200 && (quoteText.startsWith('"') || quoteText.includes('"'))) {
+          // Likely a quote even if not perfectly formatted - preserve the whole text
+          finalQuote = quoteText.trim()
+        } else if (quoteText.length < 150) {
+          // Short paragraph might be a quote - preserve the whole text
+          finalQuote = quoteText.trim()
+        }
       }
     }
     
     // If no separate quote paragraph found, check if conclusion ends with a quoted section
     if (!finalQuote && conclusionText.includes('"')) {
-      const quoteMatch = conclusionText.match(/"([^"]+)"/g)
-      if (quoteMatch && quoteMatch.length > 0) {
-        const lastQuote = quoteMatch[quoteMatch.length - 1]
-        const quoteIndex = conclusionText.lastIndexOf(lastQuote)
-        // If quote is in the last 40% of the text, treat it as separate
+      // Try to match quote with attribution at the end
+      const quoteWithAttributionMatch = conclusionText.match(/"([^"]+)"\s*-\s*([^"]+)$/)
+      if (quoteWithAttributionMatch) {
+        const quoteIndex = conclusionText.lastIndexOf(quoteWithAttributionMatch[0])
         if (quoteIndex > conclusionText.length * 0.6) {
-          finalQuote = lastQuote.replace(/"/g, '').trim()
+          finalQuote = `"${quoteWithAttributionMatch[1]}" - ${quoteWithAttributionMatch[2].trim()}`
           // Remove the quote from conclusion text
           conclusionText = conclusionText.substring(0, quoteIndex).trim()
+        }
+      } else {
+        const quoteMatch = conclusionText.match(/"([^"]+)"/g)
+        if (quoteMatch && quoteMatch.length > 0) {
+          const lastQuote = quoteMatch[quoteMatch.length - 1]
+          const quoteIndex = conclusionText.lastIndexOf(lastQuote)
+          // If quote is in the last 40% of the text, treat it as separate
+          if (quoteIndex > conclusionText.length * 0.6) {
+            // Check if there's attribution after the quote
+            const afterQuote = conclusionText.substring(quoteIndex + lastQuote.length).trim()
+            if (afterQuote.startsWith('-')) {
+              finalQuote = `${lastQuote} ${afterQuote}`
+            } else {
+              finalQuote = lastQuote.replace(/"/g, '').trim()
+            }
+            // Remove the quote from conclusion text
+            conclusionText = conclusionText.substring(0, quoteIndex).trim()
+          }
         }
       }
     }
@@ -402,8 +431,14 @@ export default function ReadingDisplay({ question, selectedCards, reading, onRes
                     {section.text}
                     {section.quote && (
                       <div className="mt-4 pt-4 border-t border-moonlight/20">
-                        <p className="text-moonlight/90 italic text-center text-lg leading-relaxed">
-                          "{section.quote}"
+                        <p 
+                          className="text-moonlight/90 italic text-center text-lg leading-relaxed"
+                          style={{ 
+                            textShadow: '0 0 10px rgba(255, 255, 255, 0.4), 0 0 20px rgba(255, 255, 255, 0.3), 0 0 30px rgba(255, 255, 255, 0.2)',
+                            filter: 'drop-shadow(0 0 5px rgba(255, 255, 255, 0.5))'
+                          }}
+                        >
+                          {section.quote}
                         </p>
                       </div>
                     )}
@@ -418,7 +453,7 @@ export default function ReadingDisplay({ question, selectedCards, reading, onRes
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={onReset}
-          className="w-full px-6 py-4 bg-gradient-to-r from-lake-blue via-mystic-purple to-lake-deep text-white text-lg font-semibold rounded-xl hover:from-blue-500 hover:via-indigo-500 hover:to-blue-700 transition-all shadow-lg shadow-lake-blue/30 font-sans"
+          className="w-full px-6 py-4 bg-white text-gray-900 rounded-full font-semibold text-lg hover:bg-gray-100 transition-all backdrop-blur-sm font-sans"
         >
           Ask Another Question
         </motion.button>
