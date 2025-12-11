@@ -4,9 +4,10 @@ import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedroc
 // Lazy initialization of Bedrock client to avoid build-time issues
 function getBedrockClient() {
   // Amplify doesn't allow env vars starting with "AWS", so we use custom names
-  const region = process.env.AWS_REGION || process.env.REGION || 'ap-southeast-2'
-  const accessKeyId = process.env.AWS_ACCESS_KEY_ID || process.env.ACCESS_KEY_ID
-  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || process.env.SECRET_ACCESS_KEY
+  // Prioritize custom names (ACCESS_KEY_ID) over AWS-prefixed ones
+  const region = process.env.REGION || process.env.AWS_REGION || 'ap-southeast-2'
+  const accessKeyId = process.env.ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID
+  const secretAccessKey = process.env.SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY
   
   // Debug logging (always log in Amplify/CloudWatch for troubleshooting)
   // Only show first/last chars of keys for security
