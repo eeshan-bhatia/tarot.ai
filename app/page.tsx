@@ -69,18 +69,39 @@ export default function Home() {
 
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}))
+          // Log full error details for debugging
+          console.error('API Error Response:', {
+            status: response.status,
+            statusText: response.statusText,
+            errorData: errorData,
+            errorName: errorData.errorName,
+            errorCode: errorData.errorCode,
+            details: errorData.details
+          })
           throw new Error(errorData.error || 'Failed to generate reading')
         }
 
         const data = await response.json()
         setReading(data.reading)
       } catch (error: any) {
-        // Only log in development
-        if (process.env.NODE_ENV === 'development') {
-          console.error('Error generating reading:', error)
-        }
+        // Log full error for debugging
+        console.error('Error generating reading:', {
+          message: error.message,
+          name: error.name,
+          stack: error.stack,
+          fullError: error
+        })
+        
+        // Show detailed error message
         const errorMessage = error.message || 'Failed to generate reading. Please try again.'
-        alert(errorMessage)
+        
+        // In production, show user-friendly message
+        // In development, show full details
+        if (process.env.NODE_ENV === 'development') {
+          alert(`Error: ${errorMessage}\n\nCheck console for full details.`)
+        } else {
+          alert(errorMessage)
+        }
       } finally {
         setIsLoading(false)
       }

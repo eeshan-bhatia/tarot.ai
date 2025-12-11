@@ -8,14 +8,21 @@ function getBedrockClient() {
   const accessKeyId = process.env.AWS_ACCESS_KEY_ID || process.env.ACCESS_KEY_ID
   const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY || process.env.SECRET_ACCESS_KEY
   
-  // Debug logging (only show first/last chars of keys for security)
-  if (process.env.NODE_ENV === 'development' || process.env.AMPLIFY_ENV) {
-    console.log('Bedrock Client Config:')
-    console.log('- Region:', region)
-    console.log('- Access Key ID present:', !!accessKeyId, accessKeyId ? `${accessKeyId.substring(0, 4)}...${accessKeyId.substring(accessKeyId.length - 4)}` : 'none')
-    console.log('- Secret Key present:', !!secretAccessKey, secretAccessKey ? '***' : 'none')
-    console.log('- Using credentials:', !!(accessKeyId && secretAccessKey))
-  }
+  // Debug logging (always log in Amplify/CloudWatch for troubleshooting)
+  // Only show first/last chars of keys for security
+  console.log('=== Bedrock Client Configuration ===')
+  console.log('Region:', region)
+  console.log('Access Key ID present:', !!accessKeyId, accessKeyId ? `${accessKeyId.substring(0, 4)}...${accessKeyId.substring(accessKeyId.length - 4)}` : 'NONE')
+  console.log('Secret Key present:', !!secretAccessKey, secretAccessKey ? 'YES (hidden)' : 'NONE')
+  console.log('Using explicit credentials:', !!(accessKeyId && secretAccessKey))
+  console.log('Environment variables checked:', {
+    'AWS_ACCESS_KEY_ID': !!process.env.AWS_ACCESS_KEY_ID,
+    'ACCESS_KEY_ID': !!process.env.ACCESS_KEY_ID,
+    'AWS_SECRET_ACCESS_KEY': !!process.env.AWS_SECRET_ACCESS_KEY,
+    'SECRET_ACCESS_KEY': !!process.env.SECRET_ACCESS_KEY,
+    'AWS_REGION': !!process.env.AWS_REGION,
+    'REGION': !!process.env.REGION
+  })
   
   const clientConfig: any = {
     region,
