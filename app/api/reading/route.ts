@@ -3,11 +3,11 @@ import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedroc
 
 // Lazy initialization of Bedrock client to avoid build-time issues
 function getBedrockClient() {
-  // Amplify doesn't allow env vars starting with "AWS", so we use custom names
-  // Prioritize custom names (ACCESS_KEY_ID) over AWS-prefixed ones
-  const region = process.env.REGION || process.env.AWS_REGION || 'ap-southeast-2'
-  const accessKeyId = process.env.ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID
-  const secretAccessKey = process.env.SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY
+  // Amplify doesn't allow env vars starting with "AWS", so we ONLY use custom names
+  // This eliminates confusion and ensures we always use the correct variables
+  const region = process.env.REGION || 'ap-southeast-2'
+  const accessKeyId = process.env.ACCESS_KEY_ID
+  const secretAccessKey = process.env.SECRET_ACCESS_KEY
   
   // Debug logging (always log in Amplify/CloudWatch for troubleshooting)
   // Only show first/last chars of keys for security
@@ -16,14 +16,16 @@ function getBedrockClient() {
   console.log('Access Key ID present:', !!accessKeyId, accessKeyId ? `${accessKeyId.substring(0, 4)}...${accessKeyId.substring(accessKeyId.length - 4)}` : 'NONE')
   console.log('Secret Key present:', !!secretAccessKey, secretAccessKey ? 'YES (hidden)' : 'NONE')
   console.log('Using explicit credentials:', !!(accessKeyId && secretAccessKey))
-  console.log('Environment variables checked:', {
-    'AWS_ACCESS_KEY_ID': !!process.env.AWS_ACCESS_KEY_ID,
+  console.log('Environment variables (only checking custom names):', {
     'ACCESS_KEY_ID': !!process.env.ACCESS_KEY_ID,
-    'AWS_SECRET_ACCESS_KEY': !!process.env.AWS_SECRET_ACCESS_KEY,
     'SECRET_ACCESS_KEY': !!process.env.SECRET_ACCESS_KEY,
-    'AWS_REGION': !!process.env.AWS_REGION,
     'REGION': !!process.env.REGION
   })
+  
+  // Warn if AWS-prefixed variables are present (they shouldn't be used)
+  if (process.env.AWS_ACCESS_KEY_ID || process.env.AWS_SECRET_ACCESS_KEY) {
+    console.warn('WARNING: AWS-prefixed environment variables detected but will be IGNORED. Use ACCESS_KEY_ID and SECRET_ACCESS_KEY instead.')
+  }
   
   const clientConfig: any = {
     region,
@@ -121,7 +123,7 @@ Begin immediately with the Past card's interpretation. Do not include any introd
     // Try: 'anthropic.claude-3-sonnet-20240229-v1:0' or 'anthropic.claude-3-sonnet-20240229-v1'
     // or just 'anthropic.claude-3-sonnet-20240229-v1' depending on what's available
     let modelId = process.env.BEDROCK_MODEL_ID || 'anthropic.claude-3-sonnet-20240229-v1:0'
-    const region = process.env.AWS_REGION || process.env.REGION || 'ap-southeast-2'
+    const region = process.env.REGION || 'ap-southeast-2'
     
     // Remove version suffix if present and try base model ID
     // Some regions require the model ID without the :0 suffix
@@ -228,7 +230,7 @@ Please verify:
           stack: error.stack,
           fullError: error.toString(),
           modelId: process.env.BEDROCK_MODEL_ID || 'anthropic.claude-3-sonnet-20240229-v1:0',
-          region: process.env.AWS_REGION || 'ap-southeast-2',
+          region: process.env.REGION || 'ap-southeast-2',
         } : undefined
       },
       { status: statusCode }
