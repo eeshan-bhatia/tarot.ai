@@ -195,3 +195,7 @@ For issues:
 - Next.js: [Next.js Documentation](https://nextjs.org/docs)
 - AWS Bedrock: [Bedrock Documentation](https://docs.aws.amazon.com/bedrock/)
 
+
+
+
+

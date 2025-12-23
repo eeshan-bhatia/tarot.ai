@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Cinzel, Playfair_Display, Crimson_Text } from 'next/font/google'
 import './globals.css'
+import AuthProviderWrapper from '@/components/AuthProviderWrapper'
 
 const cinzel = Cinzel({ 
   subsets: ['latin'],
@@ -32,7 +33,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${cinzel.variable} ${playfair.variable} ${crimson.variable} font-serif`}>{children}</body>
+      <body className={`${cinzel.variable} ${playfair.variable} ${crimson.variable} font-serif`}>
+        <AuthProviderWrapper>{children}</AuthProviderWrapper>
+      </body>
     </html>
   )
 }

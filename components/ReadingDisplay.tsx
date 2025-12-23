@@ -411,7 +411,7 @@ export default function ReadingDisplay({ question, selectedCards, reading, onRes
             className="bg-midnight-deep/50 rounded-xl p-6 border border-moonlight/10"
           >
                   <div className="flex items-center gap-3 mb-3 flex-wrap">
-                    <div className="px-3 py-1 bg-gradient-to-r from-lake-blue/30 via-mystic-purple/30 to-lake-deep/30 rounded-lg border border-moonlight/20">
+                    <div className="px-3 py-1 bg-gradient-to-r from-lake-blue/30 via-water-teal/30 to-lake-deep/30 rounded-lg border border-moonlight/20">
                       <span className="text-moonlight font-semibold text-sm font-cinzel">{section.label}</span>
                     </div>
                     {section.showCard && section.cardIndex !== undefined && selectedCards[section.cardIndex] && (

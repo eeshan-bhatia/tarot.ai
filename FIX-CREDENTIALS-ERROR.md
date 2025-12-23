@@ -126,3 +126,7 @@ If IAM roles still don't work, you can temporarily add credentials as environmen
 
 **⚠️ Warning**: This is less secure than IAM roles. Only use as a last resort.
 
+
+
+
+

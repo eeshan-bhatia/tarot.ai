@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import LandingPage from '@/components/LandingPage'
 import AboutPage from '@/components/AboutPage'
@@ -9,9 +9,17 @@ import LightRays from '@/components/LightRays'
 import QuestionInput from '@/components/QuestionInput'
 import CardSelector from '@/components/CardSelector'
 import ReadingDisplay from '@/components/ReadingDisplay'
+import SignupModal from '@/components/SignupModal'
+import LoginModal from '@/components/LoginModal'
 import { TarotCard } from '@/data/tarotCards'
+import { useAuth } from '@/contexts/AuthContext'
+import { useSubscription } from '@/contexts/SubscriptionContext'
+import { useRouter } from 'next/navigation'
 
 export default function Home() {
+  const router = useRouter()
+  const { isAuthenticated, isLoading: authLoading } = useAuth()
+  const { subscription, canDoReading, incrementReadingCount, isLoading: subscriptionLoading } = useSubscription()
   const [showLanding, setShowLanding] = useState(true)
   const [showAbout, setShowAbout] = useState(false)
   const [question, setQuestion] = useState<string | null>(null) // null = not selected, '' = general reading, string = question
@@ -20,8 +28,38 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [showQuestionInputDirectly, setShowQuestionInputDirectly] = useState(false)
   const [previousQuestion, setPreviousQuestion] = useState<string>('')
+  const [showSignupModal, setShowSignupModal] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(false)
+
+  // Check if guest user has completed a reading
+  const hasGuestCompletedReading = () => {
+    if (typeof window === 'undefined') return false
+    return localStorage.getItem('guest_reading_completed') === 'true'
+  }
+
+  // Mark guest reading as completed
+  const markGuestReadingCompleted = () => {
+    if (typeof window !== 'undefined' && !isAuthenticated) {
+      localStorage.setItem('guest_reading_completed', 'true')
+    }
+  }
+
+  // Clear guest reading flag when user signs in
+  useEffect(() => {
+    if (isAuthenticated && typeof window !== 'undefined') {
+      localStorage.removeItem('guest_reading_completed')
+    }
+  }, [isAuthenticated])
 
   const handleQuestionSubmit = (q: string | null) => {
+    // Check if free user is trying to ask a question
+    if (isAuthenticated && subscription?.tier === 'free' && q !== null && q.trim() !== '') {
+      // Free users can only do general readings
+      alert('Question-based readings are available for Basic and Premium subscribers. Please upgrade your subscription to ask specific questions.')
+      router.push('/subscription')
+      return
+    }
+
     // q can be: null (not selected), '' (general reading), or string (question)
     setQuestion(q === null ? null : q) // Keep null as null, but allow empty string
     setSelectedCards([null, null, null])
@@ -47,6 +85,19 @@ export default function Home() {
   }
 
   const handleGetReading = async () => {
+    // Check if user is a guest and has already completed a reading
+    if (!isAuthenticated && hasGuestCompletedReading()) {
+      setShowSignupModal(true)
+      return
+    }
+
+    // Check subscription limits for authenticated users
+    if (isAuthenticated && !canDoReading()) {
+      // Show upgrade modal or redirect to subscription page
+      alert('You have reached your reading limit for this month. Please upgrade your subscription to continue.')
+      return
+    }
+
     const validCards = selectedCards.filter((card): card is TarotCard => card !== null)
     if (validCards.length === 3) {
       setIsLoading(true)
@@ -83,6 +134,13 @@ export default function Home() {
 
         const data = await response.json()
         setReading(data.reading)
+        // Mark guest reading as completed after successful reading
+        if (!isAuthenticated) {
+          markGuestReadingCompleted()
+        } else {
+          // Increment reading count for authenticated users
+          await incrementReadingCount()
+        }
       } catch (error: any) {
         // Log full error for debugging
         console.error('Error generating reading:', {
@@ -109,6 +167,14 @@ export default function Home() {
   }
 
   const handleReset = () => {
+    // Check if user is a guest and has already completed a reading
+    if (!isAuthenticated && hasGuestCompletedReading()) {
+      // Show signup modal with message
+      setShowSignupModal(true)
+      return
+    }
+
+    // Allow reset for authenticated users or first-time guests
     setQuestion(null)
     setSelectedCards([null, null, null])
     setReading(null)
@@ -162,6 +228,31 @@ export default function Home() {
             onAbout={handleAbout}
             currentPage="reading"
           />
+          
+          {/* Signup Modal for guest users who need to sign up */}
+          <SignupModal
+            isOpen={showSignupModal}
+            onClose={() => {
+              setShowSignupModal(false)
+              // If user successfully signs up, clear the guest reading flag
+              // This is handled by the useEffect that watches isAuthenticated
+            }}
+            onSwitchToLogin={() => {
+              setShowSignupModal(false)
+              setShowLoginModal(true)
+            }}
+            requireSignupMessage={true}
+          />
+          
+          {/* Login Modal */}
+          <LoginModal
+            isOpen={showLoginModal}
+            onClose={() => setShowLoginModal(false)}
+            onSwitchToSignup={() => {
+              setShowLoginModal(false)
+              setShowSignupModal(true)
+            }}
+          />
           <div className="container mx-auto px-4 py-8 relative z-10">
 
             {!reading ? (
@@ -171,6 +262,8 @@ export default function Home() {
                     onSubmit={handleQuestionSubmit} 
                     initialOption={showQuestionInputDirectly ? 'question' : null}
                     initialQuestion={showQuestionInputDirectly ? previousQuestion : ''}
+                    allowQuestionReadings={!isAuthenticated || subscription?.tier !== 'free'}
+                    onUpgradeClick={() => router.push('/subscription')}
                   />
                 ) : (
                   <>
@@ -203,6 +296,20 @@ export default function Home() {
                           </button>
                         </div>
                         <p className="text-moon-silver text-lg italic">"{question}"</p>
+                        {/* Show upgrade prompt for free users if they somehow got here */}
+                        {isAuthenticated && subscription?.tier === 'free' && (
+                          <div className="mt-4 p-3 bg-lake-blue/20 border border-lake-blue/50 rounded-lg">
+                            <p className="text-lake-blue text-sm font-sans">
+                              Question-based readings require a Basic or Premium subscription. 
+                              <button
+                                onClick={() => router.push('/subscription')}
+                                className="underline ml-1 font-semibold"
+                              >
+                                Upgrade now
+                              </button>
+                            </p>
+                          </div>
+                        )}
                       </motion.div>
                     ) : (
                       <motion.div

@@ -8,9 +8,17 @@ interface QuestionInputProps {
   onSubmit: (question: string | null) => void
   initialOption?: 'question' | 'general' | null
   initialQuestion?: string
+  allowQuestionReadings?: boolean
+  onUpgradeClick?: () => void
 }
 
-export default function QuestionInput({ onSubmit, initialOption = null, initialQuestion = '' }: QuestionInputProps) {
+export default function QuestionInput({ 
+  onSubmit, 
+  initialOption = null, 
+  initialQuestion = '',
+  allowQuestionReadings = true,
+  onUpgradeClick
+}: QuestionInputProps) {
   const [question, setQuestion] = useState(initialQuestion)
   const [selectedOption, setSelectedOption] = useState<'question' | 'general' | null>(initialOption)
   
@@ -46,30 +54,65 @@ export default function QuestionInput({ onSubmit, initialOption = null, initialQ
         >
           Choose Your Reading Type
         </motion.h2>
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className={`grid gap-6 ${allowQuestionReadings ? 'md:grid-cols-2' : 'md:grid-cols-1 max-w-md mx-auto'}`}>
           {/* Ask a Question Option */}
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            whileHover={{ scale: 1.02, y: -2 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => setSelectedOption('question')}
-            className="ornate-box rounded-xl p-6 text-center hover:border-moonlight/30 transition-all font-sans"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="mb-4 flex justify-center"
+          {allowQuestionReadings ? (
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => setSelectedOption('question')}
+              className="ornate-box rounded-xl p-6 text-center hover:border-moonlight/30 transition-all font-sans"
             >
-              <QuestionIcon size={56} className="text-moonlight" />
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="mb-4 flex justify-center"
+              >
+                <QuestionIcon size={56} className="text-moonlight" />
+              </motion.div>
+              <h3 className="text-xl font-semibold text-moonlight mb-3 font-cinzel">Ask a Question</h3>
+              <p className="text-moon-silver text-sm">
+                Ask a specific question about your life, relationships, career, or any area where you seek guidance.
+              </p>
+            </motion.button>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="ornate-box rounded-xl p-6 text-center border-lake-blue/30 bg-lake-deep/20 font-sans relative"
+            >
+              <div className="absolute top-2 right-2">
+                <span className="bg-gradient-to-r from-lake-blue to-water-teal text-white text-xs font-bold px-2 py-1 rounded">
+                  PREMIUM
+                </span>
+              </div>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="mb-4 flex justify-center"
+              >
+                <QuestionIcon size={56} className="text-lake-blue/50" />
+              </motion.div>
+              <h3 className="text-xl font-semibold text-moonlight mb-3 font-cinzel">Ask a Question</h3>
+              <p className="text-moon-silver text-sm mb-4">
+                Ask a specific question about your life, relationships, career, or any area where you seek guidance.
+              </p>
+              {onUpgradeClick && (
+                <button
+                  onClick={onUpgradeClick}
+                  className="mt-4 px-4 py-2 bg-gradient-to-r from-lake-blue to-water-teal hover:from-lake-deep hover:to-cyan-600 text-white font-semibold rounded-lg transition-all duration-200 text-sm font-sans"
+                >
+                  Upgrade to Unlock
+                </button>
+              )}
             </motion.div>
-            <h3 className="text-xl font-semibold text-moonlight mb-3 font-cinzel">Ask a Question</h3>
-            <p className="text-moon-silver text-sm">
-              Ask a specific question about your life, relationships, career, or any area where you seek guidance.
-            </p>
-          </motion.button>
+          )}
 
           {/* General Reading Option */}
           <motion.button

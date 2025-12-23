@@ -88,3 +88,7 @@ If you're still getting the error, try temporarily adding credentials as environ
 
 **⚠️ Note**: This is less secure but will help us determine if it's a role issue or something else. Once working, we can switch back to IAM roles.
 
+
+
+
+

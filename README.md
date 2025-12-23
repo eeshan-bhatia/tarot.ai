@@ -6,6 +6,8 @@ A beautiful, modern web application for AI-powered tarot card readings. Users ca
 
 - 🎴 **26 Tarot Cards**: Curated deck with Major Arcana and key Minor Arcana
 - 🤖 **AI-Powered Readings**: Personalized interpretations using AWS Bedrock (Claude)
+- 🔐 **User Authentication**: Secure login/signup with AWS Cognito
+- 👤 **User Accounts**: Manage your profile and account settings
 - 🎨 **Beautiful UI**: Modern, responsive design with smooth animations
 - ✨ **Interactive Experience**: Easy card selection and reading display
 - 📱 **Mobile Friendly**: Works seamlessly on all devices
@@ -17,6 +19,8 @@ A beautiful, modern web application for AI-powered tarot card readings. Users ca
 - **Tailwind CSS** - Styling
 - **Framer Motion** - Animations
 - **AWS Bedrock** - AI reading generation via Claude models
+- **AWS Cognito** - User authentication and account management
+- **AWS Amplify** - Authentication integration
 
 ## Getting Started
 
@@ -25,6 +29,7 @@ A beautiful, modern web application for AI-powered tarot card readings. Users ca
 - Node.js 18+ and npm/yarn
 - AWS Account with Bedrock access
 - AWS credentials (Access Key ID and Secret Access Key) or IAM role with Bedrock permissions
+- AWS Cognito User Pool (for authentication features)
 
 ### Installation
 
@@ -39,19 +44,32 @@ cd tarot.ai
 npm install
 ```
 
-3. Create a `.env.local` file in the root directory (optional if using IAM roles):
+3. Set up AWS Cognito User Pool:
+
+   a. Go to AWS Cognito Console → User Pools → Create User Pool
+   b. Choose "Email" as the sign-in option
+   c. Configure password policy (minimum 8 characters recommended)
+   d. After creation, note your User Pool ID and create an App Client
+   e. In the App Client settings, enable "ALLOW_USER_PASSWORD_AUTH" and "ALLOW_USER_SRP_AUTH"
+
+4. Create a `.env.local` file in the root directory:
 ```bash
 # AWS Credentials (OPTIONAL - only needed if not using IAM role)
 # If you're running on AWS infrastructure (EC2, Lambda, ECS, etc.), 
 # you can use IAM roles instead and skip these variables
-AWS_ACCESS_KEY_ID=your_aws_access_key_id
-AWS_SECRET_ACCESS_KEY=your_aws_secret_access_key
+ACCESS_KEY_ID=your_aws_access_key_id
+SECRET_ACCESS_KEY=your_aws_secret_access_key
 
 # AWS Region (optional, defaults to ap-southeast-2)
-AWS_REGION=ap-southeast-2
+REGION=ap-southeast-2
 
 # Bedrock Model ID (optional, defaults to Claude 3 Sonnet)
 BEDROCK_MODEL_ID=anthropic.claude-3-sonnet-20240229-v1:0
+
+# AWS Cognito Configuration (REQUIRED for authentication)
+NEXT_PUBLIC_AWS_COGNITO_USER_POOL_ID=your_user_pool_id
+NEXT_PUBLIC_AWS_COGNITO_USER_POOL_CLIENT_ID=your_app_client_id
+NEXT_PUBLIC_AWS_REGION=ap-southeast-2
 ```
 
 **Note**: 
@@ -78,13 +96,22 @@ tarot.ai/
 ├── app/
 │   ├── api/
 │   │   └── reading/      # API route for generating readings
+│   ├── account/          # User account page
 │   ├── globals.css       # Global styles
 │   ├── layout.tsx        # Root layout
 │   └── page.tsx          # Main page
 ├── components/
 │   ├── CardSelector.tsx  # Card selection interface
 │   ├── QuestionInput.tsx # Question input form
-│   └── ReadingDisplay.tsx # Reading results display
+│   ├── ReadingDisplay.tsx # Reading results display
+│   ├── LoginModal.tsx    # Login modal component
+│   ├── SignupModal.tsx   # Signup modal component
+│   └── Navbar.tsx        # Navigation bar with auth
+├── contexts/
+│   └── AuthContext.tsx   # Authentication context
+├── lib/
+│   ├── amplify-config.ts # AWS Amplify configuration
+│   └── auth-middleware.ts # Auth middleware for API routes
 ├── data/
 │   └── tarotCards.ts     # Tarot card data (78 cards)
 └── package.json
@@ -92,9 +119,15 @@ tarot.ai/
 
 ## Environment Variables
 
-- `AWS_ACCESS_KEY_ID` - Your AWS Access Key ID (optional - only needed if not using IAM role)
-- `AWS_SECRET_ACCESS_KEY` - Your AWS Secret Access Key (optional - only needed if not using IAM role)
-- `AWS_REGION` - AWS region for Bedrock (optional, defaults to `ap-southeast-2`)
+### Required for Authentication
+- `NEXT_PUBLIC_AWS_COGNITO_USER_POOL_ID` - Your AWS Cognito User Pool ID (required)
+- `NEXT_PUBLIC_AWS_COGNITO_USER_POOL_CLIENT_ID` - Your AWS Cognito App Client ID (required)
+- `NEXT_PUBLIC_AWS_REGION` - AWS region for Cognito (optional, defaults to `ap-southeast-2`)
+
+### Optional (for Bedrock)
+- `ACCESS_KEY_ID` - Your AWS Access Key ID (optional - only needed if not using IAM role)
+- `SECRET_ACCESS_KEY` - Your AWS Secret Access Key (optional - only needed if not using IAM role)
+- `REGION` - AWS region for Bedrock (optional, defaults to `ap-southeast-2`)
 - `BEDROCK_MODEL_ID` - Bedrock model identifier (optional, defaults to `anthropic.claude-3-sonnet-20240229-v1:0`)
 
 **Important**: 
