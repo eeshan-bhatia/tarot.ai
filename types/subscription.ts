@@ -69,3 +69,4 @@ export interface UserSubscription {
   status: 'active' | 'canceled' | 'past_due' | 'trialing'
 }
 
+

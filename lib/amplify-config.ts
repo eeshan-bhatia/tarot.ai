@@ -25,3 +25,4 @@ if (amplifyConfig.Auth.Cognito.userPoolId && amplifyConfig.Auth.Cognito.userPool
 
 export default amplifyConfig
 
+

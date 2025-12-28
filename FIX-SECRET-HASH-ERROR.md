@@ -89,3 +89,4 @@ After creating the new App Client without a secret:
 
 The key is: **For client-side web applications, always create App Clients WITHOUT a client secret.**
 
+

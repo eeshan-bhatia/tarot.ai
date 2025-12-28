@@ -4,13 +4,12 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useAuth } from '@/contexts/AuthContext'
 import { useSubscription } from '@/contexts/SubscriptionContext'
+import { fetchAuthSession } from 'aws-amplify/auth'
 import { SUBSCRIPTION_PLANS, type SubscriptionTier } from '@/types/subscription'
 import Navbar from '@/components/Navbar'
 import LightRays from '@/components/LightRays'
 import { useRouter } from 'next/navigation'
-import { loadStripe } from '@stripe/stripe-js'
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || '')
+// No longer need to load Stripe.js - we'll redirect directly to the checkout URL
 
 export default function SubscriptionPage() {
   const { user, isAuthenticated } = useAuth()
@@ -49,17 +48,55 @@ export default function SubscriptionPage() {
       setIsProcessing(true)
       setError(null)
 
+      // Get the access token from the current session
+      const session = await fetchAuthSession()
+      
+      if (!session.tokens?.accessToken) {
+        console.error('No access token in session')
+        throw new Error('Not authenticated. Please sign in again.')
+      }
+
+      // Get the token string - in Amplify v6, accessToken is a JWT object
+      // We need to get the raw token string
+      const accessToken = session.tokens.accessToken
+      let tokenString: string
+      
+      // Try to get the token as a string
+      if (typeof accessToken === 'string') {
+        tokenString = accessToken
+      } else {
+        // In Amplify v6, accessToken might be a CognitoAccessToken object
+        // Try to access the token property or use toString
+        const tokenObj = accessToken as any
+        tokenString = tokenObj.token || tokenObj.toString?.() || String(accessToken)
+        
+        if (!tokenString || tokenString === '[object Object]') {
+          console.error('Unable to extract token string from:', accessToken)
+          throw new Error('Unable to extract access token. Please sign in again.')
+        }
+      }
+
       const response = await fetch('/api/subscription/checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${tokenString}`
+        },
         body: JSON.stringify({ tier }),
       })
 
-      const { sessionId } = await response.json()
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        throw new Error(errorData.error || 'Failed to create checkout session')
+      }
 
-      const stripe = await stripePromise
-      if (stripe) {
-        await stripe.redirectToCheckout({ sessionId })
+      const { url } = await response.json()
+
+      if (url) {
+        // Redirect directly to the Stripe Checkout URL
+        window.location.href = url
+      } else {
+        throw new Error('No checkout URL received')
       }
     } catch (err: any) {
       setError(err.message || 'Failed to start checkout process')

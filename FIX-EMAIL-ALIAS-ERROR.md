@@ -72,3 +72,4 @@ If you prefer to use email as the username directly (not as an alias), you would
 - ✅ **No user impact**: Users still sign in with their email address
 - ✅ **Error fixed**: The "Username cannot be of email format" error is resolved
 
+

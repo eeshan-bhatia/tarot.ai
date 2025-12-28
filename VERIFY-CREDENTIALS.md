@@ -4,7 +4,7 @@ Since environment variables are set correctly, let's check:
 
 ## Step 1: Verify Secret Key is Complete
 
-In your screenshot, `SECRET_ACCESS_KEY` shows as truncated: `m7qqDTiO4uN2GOUkntOj4amgDTCjIN1hOWepq...`
+In your screenshot, `SECRET_ACCESS_KEY` shows as truncated (ending with `...`)
 
 **Important**: The secret key must be the FULL value (usually 40 characters). Make sure:
 1. Click on the variable to edit it
@@ -17,7 +17,7 @@ Let's verify your credentials actually work:
 
 ```bash
 # Set the credentials
-export AWS_ACCESS_KEY_ID="AKIAYZI2MATZMGZZ2F7Y"
+export AWS_ACCESS_KEY_ID="[YOUR_ACCESS_KEY_ID]"
 export AWS_SECRET_ACCESS_KEY="[YOUR FULL SECRET KEY]"
 export AWS_DEFAULT_REGION="ap-southeast-2"
 
@@ -30,7 +30,7 @@ If this fails with "UnrecognizedClientException", your credentials are invalid.
 ## Step 3: Verify IAM User Permissions
 
 1. Go to **IAM Console** → **Users**
-2. Find the user that has access key: `AKIAYZI2MATZMGZZ2F7Y`
+2. Find the user that has the access key you're using
    - (You can search by access key prefix in IAM)
 3. Click on the user → **Permissions** tab
 4. Verify you see:
@@ -45,7 +45,7 @@ After the new deployment (with debug logging), check logs again. You should now 
 ```
 === Bedrock Client Configuration ===
 Region: ap-southeast-2
-Access Key ID present: true AKIA...F7Y
+Access Key ID present: true AKIA...XXXX
 Secret Key present: true/false
 Using explicit credentials: true/false
 Environment variables checked: { ... }
@@ -59,7 +59,7 @@ This will tell us if credentials are being read.
 2. Find your user
 3. **Security credentials** tab
 4. Check **Access keys** section
-5. Verify the key `AKIAYZI2MATZMGZZ2F7Y` still exists and is **Active**
+5. Verify your access key still exists and is **Active**
 6. If it shows as "Inactive" or doesn't exist, create a new one
 
 ## Step 6: Check for Extra Spaces
@@ -86,6 +86,7 @@ Try creating NEW access keys:
 4. Update both `ACCESS_KEY_ID` and `SECRET_ACCESS_KEY` in Amplify
 5. Redeploy
 6. Test again
+
 
 
 

@@ -29,6 +29,17 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
+.env.development
+
+# Sensitive files
+*.key
+*.pem
+*.p12
+*.pfx
+secrets.json
+config.json
+credentials.json
 
 # Vercel
 .vercel
